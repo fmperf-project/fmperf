@@ -9,7 +9,6 @@ Update the relevant sections under `if location == "local"` or `if location == "
 There are three different ways to construct a model specification:
 1. By calling the constructor of `TGISModelSpec` or `vLLMModelSpec` directly (as defined in [this file](https://github.ibm.com/ai-foundation/fmperf/blob/main/fmperf/ModelSpecs.py)).
 2. By calling `TGISModelSpec.from_yaml` or `vLLMModelSpec.from_yaml` and passing a path to a YAML file defining the specification (see example [here](https://github.ibm.com/ai-foundation/fmperf/blob/main/examples/model_specifications_tgis_one.yml) for a `TGISModelSpec`).
-3. By calling `TGISModelSpec.from_deployment` or `vLLMModelSpec.from_deployment` with path to where [BAM deployment configurations](https://github.ibm.com/ai-foundation/tgis-config) are checked out and the model ID. This will deploy a model with the same configuration that is used today in BAM.
 
 ### Define and initalize the Workload Specification
 There are two different ways to construct a model specification:
@@ -22,8 +21,9 @@ Homogeneous workloads are workloads where all concurrent users of the inference 
 #### Heterogeneous Workloads
 Heterogeneous workloads are workloads where all concurrent users of the inference server send different requests, 
 with different number of input/output tokens, different temperature etc.
-In this case, requests are generated using a statistical model that has been fitted to data from BAM logs. 
+In this case, requests are generated using a statistical model that has been fitted to data from production logs. 
 Therefore, we can consider this a somewhat realistic internal workload. 
+
 
 ### Execute `run_benchmark(...)` with the following parameters:
 | Parameter     | Type                          | Definition                                                            |
