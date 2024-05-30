@@ -1,0 +1,94 @@
+What is artificial intelligence?
+While a number of definitions of artificial intelligence (AI) have surfaced over the last few decades, John McCarthy offers the following definition in this 2004 paper (PDF, 127 KB) (link resides outside IBM), " It is the science and engineering of making intelligent machines, especially intelligent computer programs. It is related to the similar task of using computers to understand human intelligence, but AI does not have to confine itself to methods that are biologically observable."
+
+However, decades before this definition, the birth of the artificial intelligence conversation was denoted by Alan Turing's seminal work, "Computing Machinery and Intelligence" (PDF, 92 KB) (link resides outside of IBM), which was published in 1950. In this paper, Turing, often referred to as the "father of computer science", asks the following question, "Can machines think?"  From there, he offers a test, now famously known as the "Turing Test", where a human interrogator would try to distinguish between a computer and human text response. While this test has undergone much scrutiny since its publish, it remains an important part of the history of AI as well as an ongoing concept within philosophy as it utilizes ideas around linguistics.
+
+Stuart Russell and Peter Norvig then proceeded to publish, Artificial Intelligence: A Modern Approach (link resides outside IBM), becoming one of the leading textbooks in the study of AI. In it, they delve into four potential goals or definitions of AI, which differentiates computer systems on the basis of rationality and thinking vs. acting:
+
+Human approach:
+
+Systems that think like humans
+Systems that act like humans
+Ideal approach:
+
+Systems that think rationally
+Systems that act rationally
+Alan Turing’s definition would have fallen under the category of “systems that act like humans.”
+
+At its simplest form, artificial intelligence is a field, which combines computer science and robust datasets, to enable problem-solving. It also encompasses sub-fields of machine learning and deep learning, which are frequently mentioned in conjunction with artificial intelligence. These disciplines are comprised of AI algorithms which seek to create expert systems which make predictions or classifications based on input data.
+
+Over the years, artificial intelligence has gone through many cycles of hype, but even to
+skeptics, the release of OpenAI’s ChatGPT seems to mark a turning point. The last time generative AI loomed this large, the breakthroughs were in computer vision, but now the leap forward is in natural language processing. And it’s not just language: Generative models can also learn the grammar of software code, molecules, natural images, and a variety of other data types.
+
+The applications for this technology are growing every day, and we’re just starting to
+explore the possibilities. But as the hype around the use of AI in business takes off,
+conversations around ethics become critically important. To read more on where IBM stands within the conversation around AI ethics, read more here.
+
+IBM's point of view on AI
+Learn how to thrive in this new era of AI with trust and confidence. (3.7 MB)
+
+Read more - This link downloads a pdf
+Meet watsonx.ai
+
+Magic Quadrant for Enterprise Conversational AI Platforms, 2023
+
+IBM Watson Orchestrate
+
+IBM Watson Assistant
+
+Types of artificial intelligence—weak AI vs. strong AI
+Weak AI—also called Narrow AI or Artificial Narrow Intelligence (ANI)—is AI trained and focused to perform specific tasks. Weak AI drives most of the AI that surrounds us today. ‘Narrow’ might be a more accurate descriptor for this type of AI as it is anything but weak; it enables some very robust applications, such as Apple's Siri, Amazon's Alexa, IBM Watson, and autonomous vehicles.
+
+Strong AI is made up of Artificial General Intelligence (AGI) and Artificial Super Intelligence (ASI). Artificial general intelligence (AGI), or general AI, is a theoretical form of AI where a machine would have an intelligence equaled to humans; it would have a self-aware consciousness that has the ability to solve problems, learn, and plan for the future. Artificial Super Intelligence (ASI)—also known as superintelligence—would surpass the intelligence and ability of the human brain. While strong AI is still entirely theoretical with no practical examples in use today, that doesn't mean AI researchers aren't also exploring its development. In the meantime, the best examples of ASI might be from science fiction, such as HAL, the superhuman, rogue computer assistant in 2001: A Space Odyssey.
+
+Deep learning vs. machine learning
+Since deep learning and machine learning tend to be used interchangeably, it’s worth noting the nuances between the two. As mentioned above, both deep learning and machine learning are sub-fields of artificial intelligence, and deep learning is actually a sub-field of machine learning.
+
+Deep learning is actually comprised of neural networks. “Deep” in deep learning refers to a neural network comprised of more than three layers—which would be inclusive of the inputs and the output—can be considered a deep learning algorithm. This is generally represented using the diagram below.
+
+The way in which deep learning and machine learning differ is in how each algorithm learns. Deep learning automates much of the feature extraction piece of the process, eliminating some of the manual human intervention required and enabling the use of larger data sets. You can think of deep learning as "scalable machine learning" as Lex Fridman noted in same MIT lecture from above. Classical, or "non-deep", machine learning is more dependent on human intervention to learn. Human experts determine the hierarchy of features to understand the differences between data inputs, usually requiring more structured data to learn.
+
+"Deep" machine learning can leverage labeled datasets, also known as supervised learning, to inform its algorithm, but it doesn’t necessarily require a labeled dataset. It can ingest unstructured data in its raw form (e.g. text, images), and it can automatically determine the hierarchy of features which distinguish different categories of data from one another. Unlike machine learning, it doesn't require human intervention to process data, allowing us to scale machine learning in more interesting ways.
+
+Diagram of a deep neural network
+The rise of generative models
+Generative AI refers to deep-learning models that can take raw data — say, all of Wikipedia or the collected works of Rembrandt — and “learn” to generate statistically probable outputs when prompted. At a high level, generative models encode a simplified
+representation of their training data and draw from it to create a new work that’s similar,
+but not identical, to the original data.
+
+Generative models have been used for years in statistics to analyze numerical data. The rise of deep learning, however, made it possible to extend them to images, speech, and other complex data types. Among the first class of models to achieve this cross-over feat were variational autoencoders, or VAEs, introduced in 2013. VAEs were the first deep-learning models to be widely used for generating realistic images and speech.
+
+“VAEs opened the floodgates to deep generative modeling by making models easier to
+scale,” said Akash Srivastava, an expert on generative AI at the MIT-IBM Watson AI Lab.
+“Much of what we think of today as generative AI started here.”
+
+Early examples of models, like GPT-3, BERT, or DALL-E 2, have shown what’s possible. The future is models that are trained on a broad set of unlabeled data that can be used for different tasks, with minimal fine-tuning. Systems that execute specific tasks in a single domain are giving way to broad AI that learns more generally and works across domains and problems. Foundation models, trained on large, unlabeled datasets and fine-tuned for an array of applications, are driving this shift.
+
+When it comes to generative AI, it is predicted that foundation models will dramatically
+accelerate AI adoption in enterprise. Reducing labeling requirements will make it much
+easier for businesses to dive in, and the highly accurate, efficient AI-driven automation they enable will mean that far more companies will be able to deploy AI in a wider range of mission-critical situations. For IBM, the hope is that the power of foundation models can eventually be brought to every enterprise in a frictionless hybrid-cloud environment.
+
+Artificial intelligence applications
+There are numerous, real-world applications of AI systems today. Below are some of the most common use cases:
+
+Speech recognition: It is also known as automatic speech recognition (ASR), computer speech recognition, or speech-to-text, and it is a capability which uses natural language processing (NLP) to process human speech into a written format. Many mobile devices incorporate speech recognition into their systems to conduct voice search—e.g. Siri—or provide more accessibility around texting. 
+Customer service:  Online virtual agents are replacing human agents along the customer journey. They answer frequently asked questions (FAQs) around topics, like shipping, or provide personalized advice, cross-selling products or suggesting sizes for users, changing the way we think about customer engagement across websites and social media platforms. Examples include messaging bots on e-commerce sites with virtual agents, messaging apps, such as Slack and Facebook Messenger, and tasks usually done by virtual assistants and voice assistants.
+Computer vision: This AI technology enables computers and systems to derive meaningful information from digital images, videos and other visual inputs, and based on those inputs, it can take action. This ability to provide recommendations distinguishes it from image recognition tasks. Powered by convolutional neural networks, computer vision has applications within photo tagging in social media, radiology imaging in healthcare, and self-driving cars within the automotive industry.  
+Recommendation engines: Using past consumption behavior data, AI algorithms can help to discover data trends that can be used to develop more effective cross-selling strategies. This is used to make relevant add-on recommendations to customers during the checkout process for online retailers.
+Automated stock trading: Designed to optimize stock portfolios, AI-driven high-frequency trading platforms make thousands or even millions of trades per day without human intervention.
+ 
+History of artificial intelligence: Key dates and names
+The idea of 'a machine that thinks' dates back to ancient Greece. But since the advent of electronic computing (and relative to some of the topics discussed in this article) important events and milestones in the evolution of artificial intelligence include the following:
+
+1950: Alan Turing publishes Computing Machinery and Intelligence. In the paper, Turing—famous for breaking the Nazi's ENIGMA code during WWII—proposes to answer the question 'can machines think?' and introduces the Turing Test to determine if a computer can demonstrate the same intelligence (or the results of the same intelligence) as a human. The value of the Turing test has been debated ever since.
+1956: John McCarthy coins the term 'artificial intelligence' at the first-ever AI conference at Dartmouth College. (McCarthy would go on to invent the Lisp language.) Later that year, Allen Newell, J.C. Shaw, and Herbert Simon create the Logic Theorist, the first-ever running AI software program.
+1967: Frank Rosenblatt builds the Mark 1 Perceptron, the first computer based on a neural network that 'learned' though trial and error. Just a year later, Marvin Minsky and Seymour Papert publish a book titled Perceptrons, which becomes both the landmark work on neural networks and, at least for a while, an argument against future neural network research projects.
+1980s: Neural networks which use a backpropagation algorithm to train itself become widely used in AI applications.
+1997: IBM's Deep Blue beats then world chess champion Garry Kasparov, in a chess match (and rematch).
+2011: IBM Watson beats champions Ken Jennings and Brad Rutter at Jeopardy!
+2015: Baidu's Minwa supercomputer uses a special kind of deep neural network called a convolutional neural network to identify and categorize images with a higher rate of accuracy than the average human.
+2016: DeepMind's AlphaGo program, powered by a deep neural network, beats Lee Sodol, the world champion Go player, in a five-game match. The victory is significant given the huge number of possible moves as the game progresses (over 14.5 trillion after just four moves!). Later, Google purchased DeepMind for a reported USD 400 million.
+2023: A rise in large language models, or LLMs, such as ChatGPT, create an
+enormous change in performance of AI and its potential to drive enterprise value.
+With these new generative AI practices, deep-learning models can be pre-trained on
+vast amounts of raw, unlabeled data.

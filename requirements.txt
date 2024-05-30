@@ -1,0 +1,11 @@
+kubernetes==24.2.0
+black==23.1.0
+pandas
+pyyaml
+typing
+pytest
+wheel
+scikit-learn
+durations
+transformers
+sentencepiece

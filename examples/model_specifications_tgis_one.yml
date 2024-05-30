@@ -1,0 +1,4 @@
+name: "google/flan-t5-small"
+deployment_framework: "hf_transformers"
+dtype_str: "float16"
+image: "quay.io/wxpe/text-gen-server:main.9b4aea8"
