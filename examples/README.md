@@ -7,14 +7,14 @@ Update the relevant sections under `if location == "local"` or `if location == "
 
 ### Define and initalize the Model Specification
 There are three different ways to construct a model specification:
-1. By calling the constructor of `TGISModelSpec` or `vLLMModelSpec` directly (as defined in [this file](https://github.ibm.com/ai-foundation/fmperf/blob/main/fmperf/ModelSpecs.py)).
-2. By calling `TGISModelSpec.from_yaml` or `vLLMModelSpec.from_yaml` and passing a path to a YAML file defining the specification (see example [here](https://github.ibm.com/ai-foundation/fmperf/blob/main/examples/model_specifications_tgis_one.yml) for a `TGISModelSpec`).
+1. By calling the constructor of `TGISModelSpec` or `vLLMModelSpec` directly (as defined in [this file](https://github.com/fmperf-project/fmperf/blob/main/fmperf/ModelSpecs.py)).
+2. By calling `TGISModelSpec.from_yaml` or `vLLMModelSpec.from_yaml` and passing a path to a YAML file defining the specification (see example [here](https://github.com/fmperf-project/fmperf/blob/main/examples/model_specifications_tgis_one.yml) for a `TGISModelSpec`).
 
 ### Define and initalize the Workload Specification
 There are two different ways to construct a model specification:
-1. By calling the constructor of `HomogeneousWorkloadSpec` or `HeterogeneousWorkloadSpec` directly (as defined in [this file](https://github.ibm.com/ai-foundation/fmperf/blob/main/fmperf/WorkloadSpecs.py)).
+1. By calling the constructor of `HomogeneousWorkloadSpec` or `HeterogeneousWorkloadSpec` directly (as defined in [this file](https://github.com/fmperf-project/fmperf/blob/main/fmperf/WorkloadSpecs.py)).
 2. By calling `HomogeneousWorkloadSpec.from_yaml` or `HeterogeneousWorkloadSpec.from_yaml` and passing a path to a YAML file defining the specification 
-(see an example [here](https://github.ibm.com/ai-foundation/fmperf/blob/main/examples/workload_specifications.yml) for a `HomogeneousWorkloadSpec`).
+(see an example [here](https://github.com/fmperf-project/fmperf/blob/main/examples/workload_specifications.yml) for a `HomogeneousWorkloadSpec`).
 
 #### Homogeneous Workloads
 Homogeneous workloads are workloads where all concurrent users of the inference server send the same request.
