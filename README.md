@@ -9,7 +9,7 @@ All experiments are executed on a Kubernetes (k8s) or OpenShift cluster, and `fm
 Specifically, `fmperf` provides a simple Python API for deploying an inference server as a k8s `Deployment` and `Service`.
 Additionally, APIs are provided for creating a k8s `Job` to perform load testing of the service (`fmperf.loadgen`).
 
-<img width="779" alt="image" src="https://media.github.ibm.com/user/29097/files/1cdff32f-0930-4724-8bb8-01832f9e6adf">
+<img width="779" alt="image" src="https://github.com/fmperf-project/fmperf/assets/7945038/dd68109b-95f3-4d11-b8aa-244d35a8dd7c">
 
 ## Setup
 
