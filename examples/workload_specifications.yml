@@ -1,7 +1,4 @@
-min_input_tokens: 500
-max_input_tokens: 500
-min_output_tokens: 50
-max_output_tokens: 50
-frac_greedy: 1.0
-sample_size: 1
+input_tokens: 500
+output_tokens: 50
+greedy: True
 image: docker.io/fmperf-project/fmperf:local
