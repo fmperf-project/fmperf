@@ -106,7 +106,7 @@ class TGISModelSpec(ModelSpec):
         cpu_limit: int = 16,
         memory_limit: str = "128Gi",
         cpu_request: int = 8,
-        image: str = "na.artifactory.swg-devops.com/wcp-ai-foundation-team-docker-virtual/text-gen-server:latest",
+        image: str = None,
         compile: bool = False,
         trust_remote_code: bool = False,
         flash_attention: bool = False,
