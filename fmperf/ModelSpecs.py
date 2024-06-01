@@ -190,8 +190,8 @@ class TGISModelSpec(ModelSpec):
                 "value": self.cuda_visible_devices,
              },
             {   "name": "HF_HUB_CACHE",
-                "value": self.hf_hub_cache
-             },
+                "value": self.hf_hub_cache,
+            },
             {
                 # Legacy support, TRANSFORMERS_CACHE is deprecated and unsupported in newer versions of TGIS
                 "name": "TRANSFORMERS_CACHE",
@@ -425,7 +425,7 @@ class vLLMModelSpec(ModelSpec):
         tokenizer: Optional[str] = None,
         tokenizer_mode: str = "auto",
         trust_remote_code: bool = False,
-        download_dir: Optional[str] = "/models",
+        download_dir: Optional[str] = None,
         load_format: str = "auto",
         dtype: str = "auto",
         seed: int = 0,
@@ -464,7 +464,6 @@ class vLLMModelSpec(ModelSpec):
         else:
             self.hf_hub_cache = hf_hub_cache
 
-
         self.tokenizer = tokenizer
         self.tokenizer_mode = tokenizer_mode
         self.trust_remote_code = trust_remote_code
@@ -490,7 +489,6 @@ class vLLMModelSpec(ModelSpec):
         self.memory_limit = memory_limit
         self.cpu_request = cpu_request
         self.num_gpus = tensor_parallel_size
-
         super().__init__(pvcs, cluster_gpu_name)
 
     def get_vars(self):
@@ -531,7 +529,6 @@ class vLLMModelSpec(ModelSpec):
         args += ["--tensor-parallel-size", str(self.tensor_parallel_size)]
         args += ["--dtype", self.dtype]
         args += ["--enforce-eager"]
-
 
         if self.max_num_batched_tokens is not None:
             args += ["--max-num-batched-tokens", str(self.max_num_batched_tokens)]
