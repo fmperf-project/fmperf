@@ -5,12 +5,13 @@
 ### Set the Kubernetes Configuration
 Update the relevant sections under `if location == "local"` or `if location == "remote"` and set the appropriate value for `LOCATION` under `if __name__ == "__main__"`
 
-### Define and initalize the Model Specification
-There are three different ways to construct a model specification:
-1. By calling the constructor of `TGISModelSpec` or `vLLMModelSpec` directly (as defined in [this file](/fmperf/ModelSpecs.py).
+### Initalize the Model Specification
+There are two different ways to construct a model specification:
+
+1. By calling the constructor of `TGISModelSpec` or `vLLMModelSpec` directly (as defined in [this file](/fmperf/ModelSpecs.py)).
 2. By calling `TGISModelSpec.from_yaml` or `vLLMModelSpec.from_yaml` and passing a path to a YAML file defining the specification (see example [here](/examples/model_specifications_tgis_one.yml) for a `TGISModelSpec`). There is a one-to-one mapping between the constructor arguments and the key-value pairs in the yaml files.
 
-### Define and initalize the Workload Specification
+### Initalize the Workload Specification
 There are three different types of workloads to construct a workload specification from:
 
 #### Homogeneous Workloads
