@@ -3,12 +3,17 @@ import requests
 import datetime
 import pandas as pd
 import urllib3
+import yaml
 import os
 import re
 from urllib3.exceptions import InsecureRequestWarning
 
 urllib3.disable_warnings(InsecureRequestWarning)
 
+metrics = ["DCGM_FI_DEV_POWER_USAGE",
+        "kepler_container_gpu_joules_total",
+        "kepler_container_package_joules_total",
+        "kepler_container_dram_joules_total"]
 
 class MetricData:
     def __init__(self, metric: str, start: str, end: str, pod: str, data: {}):
@@ -120,22 +125,30 @@ def get_file_prefix(start_ts: str):
 
     return fprefix
 
+# get target metrics from a file specified by TARGET_METRICS_LIST env variable 
+def get_target_metrics():
+    global metrics
+    metric_list = os.environ.get('TARGET_METRICS_LIST', 'default_metrics.yaml')
+    if metric_list is not None:
+        with open(metric_list, 'r') as yml:
+            try:
+                config = yaml.safe_load(yml)
+                mlist = config["metrics"]
+                if len(mlist) > 0:
+                    metrics.extend(mlist)
+                #remove redundant metrics
+                metrics = list(dict.fromkeys(metrics))
+            except Exception as e:
+                print("catch Exception: ", e)
+    return metrics
 
 # read metrics files and concatenate them to integrate performance data
 def summarize_energy(start_ts: str):
+    global metrics
     all_df = pd.DataFrame(dtype=float)
     # target metrics
-    metrics = [
-        "DCGM_FI_DEV_POWER_USAGE",
-        "DCGM_FI_DEV_GPU_UTIL",
-        "DCGM_FI_DEV_MEM_COPY_UTIL",
-        "DCGM_FI_PROF_PIPE_TENSOR_ACTIVE",
-        "DCGM_FI_PROF_SM_ACTIVE",
-        "DCGM_FI_PROF_SM_OCCUPANCY",
-        "kepler_container_gpu_joules_total",
-        "kepler_container_package_joules_total",
-        "kepler_container_dram_joules_total",
-    ]
+    metrics = get_target_metrics()  
+
     try:
         dirpath = os.environ.get("METRICS_DIR", "/requests")
         steps = float(os.environ.get("NUM_PROM_STEPS", 30))
@@ -175,41 +188,34 @@ def summarize_energy(start_ts: str):
             if m == "DCGM_FI_DEV_POWER_USAGE":
                 all_df["num_users"] = users
                 all_df["idle_power"] = idle_df
-                all_df["dcgm_energy"] = energy_df
+                all_df["dcgm_total_energy"] = energy_df
             all_df[m] = metric_df
 
         # print(all_df)
-        all_df.index.name = "start_time"
         all_df.columns = [
             "num_users",
             "dcgm_idle_power",
-            "dcgm_energy",
+            "dcgm_total_energy",
             "dcgm_power",
-            "gpu_util",
-            "mem_util",
-            "sm_active",
-            "sm_occ",
-            "tensor_active",
-            "kepler_gpu_energy",
-            "kepler_pkg_energy",
-            "kepler_dram_energy",
         ]
+        mlist = metrics.remove("DCGM_FI_DEV_POWER_USAGE")
+        all_df.columns.extend(mlist)
+        all_df.index.name = "start_time"
 
-        all_df["kepler_energy"] = (
+        all_df["kepler_total_energy"] = (
             all_df["kepler_dram_energy"]
             .add(all_df["kepler_pkg_energy"], fill_value=0)
             .add(all_df["kepler_gpu_energy"], fill_value=0)
         )
         # if the metrics collected by Kepler are available
-        if all_df["kepler_energy"].mean() > 0:
-            all_df["energy"] = all_df["kepler_energy"]
+        if all_df["kepler_total_energy"].mean() > 0:
+            all_df["energy"] = all_df["kepler_total_energy"]
         else:
             # otherwise use DCGM metrics
             all_df["kepler_energy"] = pd.Series(dtype=float)
-            all_df["energy"] = all_df["dcgm_energy"]
+            all_df["energy"] = all_df["dcgm_total_energy"]
             # print(all_df["dcgm_energy"])
 
-        # all_df.to_csv(os.path.join(dirpath,"GPU_METRICS_{}.csv".format(start)))
     except KeyError as e:
         print("catch KeyError: ", e)
     except FileNotFoundError as e:
@@ -223,21 +229,9 @@ def summarize_energy(start_ts: str):
 
 # collecting the gpu- or energy-related metrics from Prometheus if PROM_URL is available
 def collect_metrics(start, end, step, ns):
+    global metrics
     # target metrics
-    metrics = [
-        "kepler_container_gpu_joules_total",
-        "kepler_container_package_joules_total",
-        "kepler_container_dram_joules_total",
-        "DCGM_FI_DEV_POWER_USAGE",
-        "DCGM_FI_DEV_GPU_UTIL",
-        "DCGM_FI_DEV_MEM_COPY_UTIL",
-        "DCGM_FI_PROF_SM_ACTIVE",
-        "DCGM_FI_PROF_SM_OCCUPANCY",
-        "PROF_PIPE_TENSOR_ACTIVE",
-        "PROF_NVLINK_TX_BYTES",
-        "PROF_NVLINK_RX_BYTES",
-        "PROF_PIPE_FP16_ACTIVE",
-    ]
+    metrics = get_target_metrics()
 
     try:
         promuri = os.environ.get("PROM_URL")
