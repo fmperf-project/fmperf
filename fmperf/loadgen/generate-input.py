@@ -99,7 +99,10 @@ def generate_vllm_request(config, url):
 
     expected = []
     for r in get_streaming_response(response):
-        expected.append(r)
+
+        # ignore 'empty' tokens at the beginning of the output (can occur because of chunked prefills)
+        if not ((len(expected) == 0) and (r['text'] == '')):
+            expected.append(r)
 
     # let's check if we get one output per token (not the case for TGIS)
     assert len(expected) == config["out_tokens"]

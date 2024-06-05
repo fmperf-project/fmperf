@@ -127,26 +127,28 @@ def run():
                     else:
                         apply_backoff = True
 
-                record = {
-                    "response": r,
-                    "ok": ok,
-                    "error": str(err),
-                    "timestamp": t,
-                    "exp_num_users": num_users,
-                    "exp_duration": duration.to_seconds(),
-                    "duration_ms": (t - t0) / 1000.0 / 1000.0,
-                    "exclude": (t - t_start) / 1000.0 / 1000.0 / 1000.0
-                    > (duration.to_seconds() + grace_period.to_seconds()),
-                    "worker_idx": wid,
-                    "request_idx": request_idx,
-                    "sample_idx": sample_idx,
-                    "response_idx": response_idx,
-                    "n_tokens": n_tokens,
-                }
+                # ignore 'empty' tokens at the beginning of the output (can occur because of chunked prefills)
+                if not ((r['text'] == '') and (response_idx == 0)):
+                    record = {
+                        "response": r,
+                        "ok": ok,
+                        "error": str(err),
+                        "timestamp": t,
+                        "exp_num_users": num_users,
+                        "exp_duration": duration.to_seconds(),
+                        "duration_ms": (t - t0) / 1000.0 / 1000.0,
+                        "exclude": (t - t_start) / 1000.0 / 1000.0 / 1000.0
+                        > (duration.to_seconds() + grace_period.to_seconds()),
+                        "worker_idx": wid,
+                        "request_idx": request_idx,
+                        "sample_idx": sample_idx,
+                        "response_idx": response_idx,
+                        "n_tokens": n_tokens,
+                    }
 
-                output.append(record)
-                response_idx += 1
-                t0 = t
+                    output.append(record)
+                    response_idx += 1
+                    t0 = t
 
             if apply_backoff:
                 time.sleep(backoff.to_seconds())
