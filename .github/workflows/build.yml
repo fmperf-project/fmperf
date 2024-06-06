@@ -20,7 +20,7 @@ defaults:
     shell: bash
 
 env:
-  SERVER_IMAGE: "quay.io/fmperf/fmperf"
+  IMAGE: "quay.io/fmperf/fmperf"
   IMAGE_REGISTRY: "quay.io"
 
 jobs:
@@ -40,7 +40,7 @@ jobs:
       - name: "Set up Docker Buildx"
         uses: docker/setup-buildx-action@v3
 
-      - name: "Log in to container registry (server-release)"
+      - name: "Log in to container registry (release)"
         uses: docker/login-action@v3
         if: github.event_name != 'pull_request'
         with:
@@ -53,7 +53,7 @@ jobs:
         uses: docker/metadata-action@v5
         with:
           images: |
-            ${{ env.SERVER_IMAGE }}
+            ${{ env.IMAGE }}
           tags: |
             type=ref,event=branch
             type=semver,pattern={{version}}
@@ -61,11 +61,11 @@ jobs:
             type=sha,enable=true,priority=100,prefix=,suffix=,format=short     
             type=sha,enable=true,priority=100,prefix=${{ github.ref_name }}.,suffix=,format=short  
 
-      - name: "Docker build server-release"
+      - name: "Docker build release"
         uses: docker/build-push-action@v5
         with:
           context: .
-          target: server-release
+          target: release
           build-args: |
             GIT_COMMIT_HASH=${{ github.sha }}
           tags: ${{ steps.meta.outputs.tags }}
