@@ -4,4 +4,4 @@ min_output_tokens: 50
 max_output_tokens: 50
 frac_greedy: 1.0
 sample_size: 1
-image: docker.io/fmperf-project/fmperf:local
+image: quay.io/fmperf/fmperf:main
