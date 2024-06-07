@@ -38,7 +38,8 @@ def get_streaming_response(response: requests.Response):
             data = chunk.decode("utf-8").strip().split("data: ")[1]
             out = json.loads(data)["choices"][0]
             finished = out["finish_reason"] is not None
-            yield out
+            if not (out['text'] == ''): # filter empty tokens
+                yield out
 
 
 def get_text():
@@ -99,10 +100,7 @@ def generate_vllm_request(config, url):
 
     expected = []
     for r in get_streaming_response(response):
-
-        # ignore 'empty' tokens at the beginning of the output (can occur because of chunked prefills)
-        if not ((len(expected) == 0) and (r['text'] == '')):
-            expected.append(r)
+        expected.append(r)
 
     # let's check if we get one output per token (not the case for TGIS)
     assert len(expected) == config["out_tokens"]
