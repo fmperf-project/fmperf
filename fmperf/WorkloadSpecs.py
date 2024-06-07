@@ -4,7 +4,7 @@ import yaml
 class WorkloadSpec:
     def __init__(
         self,
-        sample_size: int = 1,
+        sample_size: int = 10,
         image: str = "fmperf-project/fmperf:local",
         pvc_name: str = None,
         overwrite: bool = False,
@@ -47,6 +47,7 @@ class WorkloadSpec:
             {"name": "REQUESTS_FILENAME", "value": outfile},
         ]
         return env
+
 
 class HomogeneousWorkloadSpec(WorkloadSpec):
     def __init__(
