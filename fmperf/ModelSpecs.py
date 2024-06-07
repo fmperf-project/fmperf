@@ -186,10 +186,12 @@ class TGISModelSpec(ModelSpec):
                 "name": "NUM_GPUS",
                 "value": str(self.num_gpus),
             },
-            {   "name": "CUDA_VISIBLE_DEVICES",
+            {
+                "name": "CUDA_VISIBLE_DEVICES",
                 "value": self.cuda_visible_devices,
-             },
-            {   "name": "HF_HUB_CACHE",
+            },
+            {
+                "name": "HF_HUB_CACHE",
                 "value": self.hf_hub_cache,
             },
             {
