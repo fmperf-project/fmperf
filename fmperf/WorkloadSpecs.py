@@ -120,7 +120,6 @@ class HeterogeneousWorkloadSpec(WorkloadSpec):
         self.min_output_tokens = min_output_tokens
         self.max_output_tokens = max_output_tokens
         self.frac_greedy = frac_greedy
-
         super().__init__(sample_size, image, pvc_name, overwrite)
 
     @classmethod
