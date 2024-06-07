@@ -7,7 +7,7 @@ Update the relevant sections under `if location == "local"` or `if location == "
 
 ### Creating a Model Specification
 There are two different ways to create a model specification:
-1. By calling the constructor of `TGISModelSpec` or `vLLMModelSpec` directly (as defined in [this file](/fmperf/ModelSpecs.py).
+1. By calling the constructor of `TGISModelSpec` or `vLLMModelSpec` directly (as defined in [this file](/fmperf/ModelSpecs.py)).
 2. By calling `TGISModelSpec.from_yaml` or `vLLMModelSpec.from_yaml` and passing a path to a YAML file defining the specification (see example [here](/examples/model_specifications_tgis_one.yml) for a `TGISModelSpec`). 
 There is a one-to-one mapping between the constructor arguments and the key-value pairs in the yaml files.
 
@@ -18,13 +18,15 @@ There are three different types of workloads that can be created:
 #### Homogeneous Workloads
 Homogeneous workloads are workloads where all concurrent users of the inference server send exactly the same request.
 The corresponding class is `HomogeneousWorkloadSpec`.
-Whe constructing a `HomogeneousWorkloadSpec`, one must define the number of input tokens, the number of output tokens and whether the requests should use greedy sampling. 
+When constructing a `HomogeneousWorkloadSpec`, one must define the number of input tokens (`input_tokens`), the number of output tokens (`output_tokens`) and whether the requests should use greedy sampling (`greedy`). 
 An example YAML file is provided [here](/examples/workload_specification.yml).
 
 #### Heterogeneous Workloads
 Heterogeneous workloads are workloads where all concurrent users of the inference server send different requests.
 The corresponding class is `HeterogeneousWorkloadSpec`.
-The user defines a range for input/output tokens using min/max values, and the number of input/output tokens is drawn uniformly for each request within that range. 
+When constructing a `HeterogeneousWorkloadSpec`, one must define a range for the number of input/output tokens using min/max values.
+The number of input tokens for each request will be drawn uniformly between `min_input_tokens` and `max_input_tokens`. 
+Similarly, the number of output tokens for each request will be drawn uniformly between `min_output_tokens` and `max_output_tokens`.
 Similarly, whether each request will use greedy sampling is determined by sampling from a Bernoulli distribution with probability `frac_greedy`. 
 
 #### Realistic Workloads
