@@ -109,8 +109,8 @@ class HeterogeneousWorkloadSpec(WorkloadSpec):
         max_input_tokens: int = 20,
         min_output_tokens: int = 10,
         max_output_tokens: int = 20,
-        greedy: bool = True,
-        sample_size: int = 1,
+        frac_greedy: float = 0.5,
+        sample_size: int = 10,
         image: str = "fmperf-project/fmperf:local",
         pvc_name: str = None,
         overwrite: bool = False,
@@ -119,7 +119,7 @@ class HeterogeneousWorkloadSpec(WorkloadSpec):
         self.max_input_tokens = max_input_tokens
         self.min_output_tokens = min_output_tokens
         self.max_output_tokens = max_output_tokens
-        self.greedy = greedy
+        self.frac_greedy = frac_greedy
 
         super().__init__(sample_size, image, pvc_name, overwrite)
 
@@ -155,7 +155,7 @@ class HeterogeneousWorkloadSpec(WorkloadSpec):
             },
             {
                 "name": "FRAC_GREEDY",
-                "value": "1.0" if self.greedy else "0.0",
+                "value": str(self.frac_greedy),
             },
         ]
         return env
