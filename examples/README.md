@@ -12,7 +12,7 @@ There are two different ways to create a model specification:
 There is a one-to-one mapping between the constructor arguments and the key-value pairs in the yaml files.
 
 ### Creating a Workload Specification
-Similarly, one can create a workload specification by calling the constructor of one of the `WorkloadSpec` classes (as defined in [this file](/fmperf/ModelSpecs.py)) or by calling class method `from_yaml`. 
+Similarly, one can create a workload specification by calling the constructor of one of the `WorkloadSpec` classes (as defined in [this file](/fmperf/WorkloadSpecs.py)) or by calling class method `from_yaml`. 
 There are three different types of workloads that can be created:
 
 #### Homogeneous Workloads
