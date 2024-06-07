@@ -46,7 +46,7 @@ if __name__ == "__main__":
 
     ## USER Entry: File Location for model parameters and workload parameters
     MODEL_FILE = "model_specifications_tgis_one.yml"
-    WORKLOAD_FILE = "workload_specifications.yml"
+    WORKLOAD_FILE = "workload_specification.yml"
 
     DURATION = "30s"  # Duration of experiment per each number of virtual users
     NUM_USERS = [1, 2]  # Number of virtual users creating requests
