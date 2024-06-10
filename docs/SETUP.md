@@ -160,21 +160,5 @@ nvidia-device-plugin-daemonset-xjb5f                              1/1     Runnin
 nvidia-device-plugin-validator-dm69w                              0/1     Completed   0          14s
 nvidia-operator-validator-ztpls                                   1/1     Running     0          114s
 ```
-## Loading a local fmperf image into the cluster node
-
-Currently the fmperf load-tesing docker image is not available on a remote registry. Therefore,  we need to build a docker image from the Dockerfile provided in the repo, and load it into the cluster node.
-
-```
-docker build -t fmperf-project/fmperf:local .
-kind load fmperf-project/fmperf:local --name gpu-test
-```
-
-You can verify if this image is correctly loaded into the cluster node:
-
-```
-docker exec -it gpu-test-control-plane crictl images | grep local
-
-docker.io/fmperf-project/fmperf   local   c20f63b5bb19d    992M
-```
 
 The cluster is now ready to run the benchmark. As a first try, run the examples/example_vllm.py script.
