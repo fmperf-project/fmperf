@@ -10,10 +10,13 @@ from urllib3.exceptions import InsecureRequestWarning
 
 urllib3.disable_warnings(InsecureRequestWarning)
 
-metrics = ["DCGM_FI_DEV_POWER_USAGE",
-        "kepler_container_gpu_joules_total",
-        "kepler_container_package_joules_total",
-        "kepler_container_dram_joules_total"]
+metrics = [
+    "DCGM_FI_DEV_POWER_USAGE",
+    "kepler_container_gpu_joules_total",
+    "kepler_container_package_joules_total",
+    "kepler_container_dram_joules_total",
+]
+
 
 class MetricData:
     def __init__(self, metric: str, start: str, end: str, pod: str, data: {}):
@@ -125,29 +128,31 @@ def get_file_prefix(start_ts: str):
 
     return fprefix
 
-# get target metrics from a file specified by TARGET_METRICS_LIST env variable 
+
+# get target metrics from a file specified by TARGET_METRICS_LIST env variable
 def get_target_metrics():
     global metrics
-    metric_list = os.environ.get('TARGET_METRICS_LIST', 'default_metrics.yaml')
+    metric_list = os.environ.get("TARGET_METRICS_LIST", "default_metrics.yaml")
     if metric_list is not None:
-        with open(metric_list, 'r') as yml:
+        with open(metric_list, "r") as yml:
             try:
                 config = yaml.safe_load(yml)
                 mlist = config["metrics"]
                 if len(mlist) > 0:
                     metrics.extend(mlist)
-                #remove redundant metrics
+                # remove redundant metrics
                 metrics = list(dict.fromkeys(metrics))
             except Exception as e:
                 print("catch Exception: ", e)
     return metrics
+
 
 # read metrics files and concatenate them to integrate performance data
 def summarize_energy(start_ts: str):
     global metrics
     all_df = pd.DataFrame(dtype=float)
     # target metrics
-    metrics = get_target_metrics()  
+    metrics = get_target_metrics()
 
     try:
         dirpath = os.environ.get("METRICS_DIR", "/requests")

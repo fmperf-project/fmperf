@@ -1,6 +1,7 @@
 """
 This script runs benchmarking on TGIS server.
 """
+
 import os
 from pathlib import Path
 import uuid
@@ -30,7 +31,9 @@ def initialize_kubernetes(location):
         config.verify_ssl = False
         apiclient = client.ApiClient(config)
         urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
-        cluster = Cluster(name="llm", apiclient=apiclient, namespace=os.environ["OPENSHIFT_NAMESPACE"])
+        cluster = Cluster(
+            name="llm", apiclient=apiclient, namespace=os.environ["OPENSHIFT_NAMESPACE"]
+        )
         model_pvcs = [("my-models-pvc", "/models")]
         workload_pvc_name = "my-workload-pvc"
         cluster_gpu_name = "NVIDIA-A100-SXM4-80GB"
