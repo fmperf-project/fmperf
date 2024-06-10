@@ -182,9 +182,18 @@ class TGISModelSpec(ModelSpec):
                 "name": "MODEL_NAME",
                 "value": self.name,
             },
-            {"name": "NUM_GPUS", "value": str(self.num_gpus)},
-            {"name": "CUDA_VISIBLE_DEVICES", "value": self.cuda_visible_devices},
-            {"name": "HF_HUB_CACHE", "value": self.hf_hub_cache},
+            {
+                "name": "NUM_GPUS",
+                "value": str(self.num_gpus),
+            },
+            {
+                "name": "CUDA_VISIBLE_DEVICES",
+                "value": self.cuda_visible_devices,
+            },
+            {
+                "name": "HF_HUB_CACHE",
+                "value": self.hf_hub_cache,
+            },
             {
                 # Legacy support, TRANSFORMERS_CACHE is deprecated and unsupported in newer versions of TGIS
                 "name": "TRANSFORMERS_CACHE",
@@ -440,7 +449,8 @@ class vLLMModelSpec(ModelSpec):
         memory_limit: str = "128Gi",
         cpu_request: int = 8,
         pvcs: list = None,
-        transformers_cache: str = "/models",
+        transformers_cache: str = None,
+        hf_hub_cache: str = "/models",
         cluster_gpu_name: str = None,
     ):
         self.name = name
@@ -449,6 +459,12 @@ class vLLMModelSpec(ModelSpec):
             self.shortname = self.shortname.replace("_", "-")
         else:
             self.shortname = shortname
+
+        if transformers_cache is not None and hf_hub_cache == "/models":
+            # If only transformers_cache is specified and _not_ hf_hub_cache, then use transformers_cache
+            self.hf_hub_cache = transformers_cache
+        else:
+            self.hf_hub_cache = hf_hub_cache
 
         self.tokenizer = tokenizer
         self.tokenizer_mode = tokenizer_mode
@@ -475,22 +491,21 @@ class vLLMModelSpec(ModelSpec):
         self.memory_limit = memory_limit
         self.cpu_request = cpu_request
         self.num_gpus = tensor_parallel_size
-        self.transformers_cache = transformers_cache
         super().__init__(pvcs, cluster_gpu_name)
 
     def get_vars(self):
         vars = [
             {
-                "name": "TRANSFORMERS_CACHE",
-                "value": self.transformers_cache,
+                "name": "HF_HUB_CACHE",
+                "value": self.hf_hub_cache,
             },
             {
-                "name": "HUGGINGFACE_HUB_CACHE",
-                "value": "$(TRANSFORMERS_CACHE)",
+                "name": "TRANSFORMERS_CACHE",
+                "value": "$(HF_HUB_CACHE)",
             },
             {
                 "name": "HF_HUB_OFFLINE",
-                "value": "1",
+                "value": "0",
             },
             {
                 "name": "NUMBA_CACHE_DIR",

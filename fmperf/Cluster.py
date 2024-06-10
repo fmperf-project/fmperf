@@ -345,6 +345,7 @@ class Cluster:
         num_prom_steps: int = 30,
         prom_url: str = None,
         prom_token: str = None,
+        metric_list: str = None,
         id: str = "",
     ):
         # type of service: vllm/tgis
@@ -384,6 +385,9 @@ class Cluster:
 
         if prom_token is not None:
             env.append({"name": "PROM_TOKEN", "value": prom_token})
+
+        if metric_list is not None:
+            env.append({"name": "TARGET_METRICS_LIST", "value": metric_list})
 
         manifest = {
             "apiVersion": "batch/v1",
