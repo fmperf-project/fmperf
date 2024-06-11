@@ -38,7 +38,8 @@ def get_streaming_response(response: requests.Response):
             data = chunk.decode("utf-8").strip().split("data: ")[1]
             out = json.loads(data)["choices"][0]
             finished = out["finish_reason"] is not None
-            yield out
+            if not (out['text'] == ''): # filter empty tokens
+                yield out
 
 
 def get_text():

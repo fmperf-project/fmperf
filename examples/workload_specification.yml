@@ -1,4 +1,4 @@
 input_tokens: 500
 output_tokens: 50
 greedy: True
-image: docker.io/fmperf-project/fmperf:local
+image: quay.io/fmperf/fmperf:main

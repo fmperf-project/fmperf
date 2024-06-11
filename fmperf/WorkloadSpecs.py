@@ -5,7 +5,7 @@ class WorkloadSpec:
     def __init__(
         self,
         sample_size: int = 10,
-        image: str = "fmperf-project/fmperf:local",
+        image: str = "quay.io/fmperf/fmperf:main",
         pvc_name: str = None,
         overwrite: bool = False,
     ):
@@ -112,7 +112,7 @@ class HeterogeneousWorkloadSpec(WorkloadSpec):
         max_output_tokens: int = 20,
         frac_greedy: float = 0.5,
         sample_size: int = 10,
-        image: str = "fmperf-project/fmperf:local",
+        image: str = "quay.io/fmperf/fmperf:main",
         pvc_name: str = None,
         overwrite: bool = False,
     ):
@@ -165,7 +165,7 @@ class RealisticWorkloadSpec(WorkloadSpec):
     def __init__(
         self,
         sample_size: int = 10,
-        image: str = "fmperf-project/fmperf:local",
+        image: str = "quay.io/fmperf/fmperf:main",
         pvc_name: str = None,
         overwrite: bool = False,
     ):

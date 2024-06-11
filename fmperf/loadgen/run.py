@@ -49,7 +49,8 @@ def run():
                     data = chunk.decode("utf-8").strip().split("data: ")[1]
                     out = json.loads(data)["choices"][0]
                     stop = out["finish_reason"] is not None
-                    yield out, 1, timestamp, True, None
+                    if not (out['text'] == ''): # filter empty tokens
+                        yield out, 1, timestamp, True, None
             except Exception as e:
                 timestamp = time.time_ns()
                 yield None, 0, timestamp, False, e
