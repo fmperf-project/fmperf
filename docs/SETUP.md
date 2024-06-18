@@ -1,8 +1,8 @@
 # Setting up a local k8s cluster
 
-Below, we provide instructions for creating a single-node, local kubernetes (k8s) cluster on a development machine **without** super-user permissions and **with** GPU support.
+Below, we provide instructions for creating a single-node, local kubernetes (k8s) cluster on a development machine **with** GPU support.
 
-## Pre-requisites
+## Prerequisites
 1. NVIDIA container toolkit is installed on the node.
 2. The default runtime runtime for Docker is set to NVIDIA:
 ```
@@ -97,45 +97,47 @@ Please ensure that these directories (or their equivalent) exist and are both re
 Then execute the following which create the cluster:
 ```shell
 $ kind create cluster --config kind-gpu.yaml
-Creating cluster "gpu-test" ...
- ✓ Ensuring node image (kindest/node:v1.24.12) 🖼
+Creating cluster "fmperf-cluster" ...
+ ✓ Ensuring node image (kindest/node:v1.30.0) 🖼
  ✓ Preparing nodes 📦
  ✓ Writing configuration 📜
  ✓ Starting control-plane 🕹️
  ✓ Installing CNI 🔌
  ✓ Installing StorageClass 💾
-Set kubectl context to "kind-gpu-test"
+Set kubectl context to "kind-fmperf-cluster"
 You can now use your cluster with:
 
-kubectl cluster-info --context kind-gpu-test
+kubectl cluster-info --context kind-fmperf-cluster
 
 Have a question, bug, or feature request? Let us know! https://kind.sigs.k8s.io/#community 🙂
 ```
 
 Let's verify the status of the clusters with:
 ```shell
-$ kubectl cluster-info --context kind-gpu-test
-Kubernetes control plane is running at https://127.0.0.1:42303
-CoreDNS is running at https://127.0.0.1:42303/api/v1/namespaces/kube-system/services/kube-dns:dns/proxy
+$ kubectl cluster-info --context kind-fmperf-cluster
+
+Kubernetes control plane is running at https://127.0.0.1:36111
+CoreDNS is running at https://127.0.0.1:36111/api/v1/namespaces/kube-system/services/kube-dns:dns/proxy
 
 To further debug and diagnose cluster problems, use 'kubectl cluster-info dump'.
 ```
 ```shell
 $ kubectl get nodes
-NAME                     STATUS   ROLES           AGE   VERSION
-gpu-test-control-plane   Ready    control-plane   77s   v1.24.12
+NAME                           STATUS   ROLES           AGE     VERSION\
+fmperf-cluster-control-plane   Ready    control-plane   8m22s   v1.30.0
 ```
 ```shell
 $ kubectl get pods -A
-NAMESPACE            NAME                                             READY   STATUS    RESTARTS   AGE
-kube-system          coredns-57575c5f89-djgdt                         1/1     Running   0          50s
-kube-system          coredns-57575c5f89-kktz8                         1/1     Running   0          50s
-kube-system          etcd-gpu-test-control-plane                      1/1     Running   0          66s
-kube-system          kindnet-tdrcj                                    1/1     Running   0          51s
-kube-system          kube-controller-manager-gpu-test-control-plane   1/1     Running   0          64s
-kube-system          kube-proxy-dd6r4                                 1/1     Running   0          51s
-kube-system          kube-scheduler-gpu-test-control-plane            1/1     Running   0          64s
-local-path-storage   local-path-provisioner-6dfffb7d87-czcv2          1/1     Running   0          50s
+NAMESPACE            NAME                                                   READY   STATUS    RESTARTS   AGE
+kube-system          coredns-7db6d8ff4d-hnlnw                               1/1     Running   0          8m30s
+kube-system          coredns-7db6d8ff4d-mxmpw                               1/1     Running   0          8m30s
+kube-system          etcd-fmperf-cluster-control-plane                      1/1     Running   0          8m45s
+kube-system          kindnet-sw8f9                                          1/1     Running   0          8m30s
+kube-system          kube-apiserver-fmperf-cluster-control-plane            1/1     Running   0          8m45s
+kube-system          kube-controller-manager-fmperf-cluster-control-plane   1/1     Running   0          8m45s
+kube-system          kube-proxy-5mb4x                                       1/1     Running   0          8m30s
+kube-system          kube-scheduler-fmperf-cluster-control-plane            1/1     Running   0          8m44s
+local-path-storage   local-path-provisioner-988d74bc-74ztt                  1/1     Running   0          8m30s
 ```
 
 ## Install NVIDIA GPU Operator
