@@ -51,7 +51,7 @@ if __name__ == "__main__":
         cluster_gpu_name=cluster_gpu_name,
     )
 
-    workload_spec = HomogeneousWorkloadSpec.from_yaml("workload_specifications.yml")
+    workload_spec = HomogeneousWorkloadSpec.from_yaml("workload_specification.yml")
     workload_spec.pvc_name = workload_pvc_name
 
     # Prometheus URL and (if needed) token

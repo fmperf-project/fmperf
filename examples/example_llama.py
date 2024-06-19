@@ -50,7 +50,7 @@ if __name__ == "__main__":
     SERVER_TYPE: str = "vllm"
 
     ## USER Entry: File Location for model workload parameters
-    WORKLOAD_FILE = "workload_specifications.yml"
+    WORKLOAD_FILE = "workload_specification.yml"
 
     # Initialize Kubernetes
     cluster, model_pvcs, workload_pvc_name, cluster_gpu_name = initialize_kubernetes(

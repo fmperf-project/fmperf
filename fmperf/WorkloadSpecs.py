@@ -5,7 +5,7 @@ class WorkloadSpec:
     def __init__(
         self,
         sample_size: int = 10,
-        image: str = "fmperf-project/fmperf:local",
+        image: str = "quay.io/fmperf/fmperf:main",
         pvc_name: str = None,
         overwrite: bool = False,
     ):
@@ -52,13 +52,67 @@ class WorkloadSpec:
 class HomogeneousWorkloadSpec(WorkloadSpec):
     def __init__(
         self,
+        input_tokens: int = 500,
+        output_tokens: int = 50,
+        greedy: bool = True,
+        image: str = "fmperf-project/fmperf:local",
+        pvc_name: str = None,
+        overwrite: bool = False,
+    ):
+        self.input_tokens = input_tokens
+        self.output_tokens = output_tokens
+        self.greedy = greedy
+
+        super().__init__(1, image, pvc_name, overwrite)
+
+
+    @classmethod
+    def from_yaml(cls, file: str):
+        return super().from_yaml(file)
+
+    def get_args(self):
+        return ["python -m fmperf.loadgen.generate-input"]
+
+    def get_env(
+        self,
+        target: str,
+        model: "DeployedModel",
+        outfile: str,
+    ):
+        env = super().get_env(target, model, outfile) + [
+            {
+                "name": "MIN_INPUT_TOKENS",
+                "value": str(self.input_tokens),
+            },
+            {
+                "name": "MAX_INPUT_TOKENS",
+                "value": str(self.input_tokens),
+            },
+            {
+                "name": "MIN_OUTPUT_TOKENS",
+                "value": str(self.output_tokens),
+            },
+            {
+                "name": "MAX_OUTPUT_TOKENS",
+                "value": str(self.output_tokens),
+            },
+            {
+                "name": "FRAC_GREEDY",
+                "value": "1.0" if self.greedy else "0.0",
+            },
+        ]
+        return env
+
+class HeterogeneousWorkloadSpec(WorkloadSpec):
+    def __init__(
+        self,
         min_input_tokens: int = 10,
         max_input_tokens: int = 20,
         min_output_tokens: int = 10,
         max_output_tokens: int = 20,
         frac_greedy: float = 0.5,
         sample_size: int = 10,
-        image: str = "fmperf-project/fmperf:local",
+        image: str = "quay.io/fmperf/fmperf:main",
         pvc_name: str = None,
         overwrite: bool = False,
     ):
@@ -107,11 +161,11 @@ class HomogeneousWorkloadSpec(WorkloadSpec):
         return env
 
 
-class HeterogeneousWorkloadSpec(WorkloadSpec):
+class RealisticWorkloadSpec(WorkloadSpec):
     def __init__(
         self,
         sample_size: int = 10,
-        image: str = "fmperf-project/fmperf:local",
+        image: str = "quay.io/fmperf/fmperf:main",
         pvc_name: str = None,
         overwrite: bool = False,
     ):
