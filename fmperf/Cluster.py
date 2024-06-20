@@ -47,6 +47,7 @@ class Cluster:
         self,
         model: ModelSpec,
         id: str = "",
+        prometheus_enabled: bool = False,
     ):
         creating = Creating(self.apigetter, self.logger, ignore_exists=True)
         vars = model.get_vars()
@@ -110,10 +111,6 @@ class Cluster:
                 "strategy": {"rollingUpdate": {"maxSurge": 1}},
                 "template": {
                     "metadata": {
-                        "annotations": {
-                            "prometheus.io/port": "3000",
-                            "prometheus.io/scrape": "true",
-                        },
                         "labels": {
                             "app": name,
                         },
@@ -167,17 +164,11 @@ class Cluster:
                 "namespace": self.namespace,
             },
             "spec": {
-                "ports": [{"name": "grpc", "port": 8033, "targetPort": "grpc"}],
+                "ports": model.get_service_ports(),
                 "selector": {"app": name},
                 "type": "ClusterIP",
             },
         }
-
-        # Change the service manifest if vllm server is to be deployed
-        if type(model) is vLLMModelSpec:
-            manifest["spec"]["ports"] = [
-                {"name": "http", "port": 8000, "targetPort": "http"}
-            ]
 
         # create service
         creating.create_namespaced_service(
@@ -193,6 +184,30 @@ class Cluster:
 
         # get server url
         url = model.get_url() % (out.spec.cluster_ip)
+
+        if prometheus_enabled:
+            manifest = {
+                "apiVersion": "monitoring.coreos.com/v1",
+                "kind": "ServiceMonitor",
+                "metadata": {
+                    "name": name,
+                    "namespace": self.namespace,
+                },
+                "spec": {
+                    "selector": {"matchLabels": {"app": name}},
+                    "endpoints": self.get_service_monitor_endpoints()
+                },
+            }
+
+            # create service monitor
+            creating.create_namespaced_custom_object(
+                name,
+                "monitoring.coreos.com/v1",
+                self.namespace,
+                "servicemonitors",
+                manifest,
+                wait_until=None,
+            )
 
         return DeployedModel(
             spec=model,

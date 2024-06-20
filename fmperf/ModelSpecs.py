@@ -215,7 +215,8 @@ class TGISModelSpec(ModelSpec):
                 "name": "MAX_CONCURRENT_REQUESTS",
                 "value": str(self.max_concurrent_requests),
             },
-            {"name": "DTYPE_STR", "value": self.dtype_str},
+            {   "name": "DTYPE_STR",
+                "value": self.dtype_str},
             {
                 "name": "DEPLOYMENT_FRAMEWORK",
                 "value": self.deployment_framework,
@@ -244,7 +245,10 @@ class TGISModelSpec(ModelSpec):
                 "name": "OUTPUT_SPECIAL_TOKENS",
                 "value": str(self.output_special_tokens).lower(),
             },
-            {"name": "PAGED_ATTENTION", "value": str(self.paged_attention).lower()},
+            {
+                "name": "PAGED_ATTENTION",
+                "value": str(self.paged_attention).lower(),
+            },
             {
                 "name": "PORT",
                 "value": str(self.port),
@@ -353,10 +357,27 @@ class TGISModelSpec(ModelSpec):
         }
 
     def get_ports(self):
+        # Specifies the ports for the container
+        return [
+            {"containerPort": 8033, "name": "grpc"},
+            {"containerPort": 3000, "name": "http"},
+        ]
+
+    def get_service_ports(self):
         # Specifies the ports for service
         return [
-            {"containerPort": 3000, "name": "http"},
-            {"containerPort": 8033, "name": "grpc"},
+            {"name": "grpc", "port": 8033, "targetPort": "grpc"},
+            {"name": "http", "port": 3000, "targetPort": "http"},
+        ]
+
+    def get_service_monitor_endpoints(self):
+        # Specifies the end-points for the service monitor
+        return [
+            {
+            "port": "http",
+            "path": "/metrics",
+            "interval": "1s"
+            },
         ]
 
     def get_readiness_probe(self):
@@ -552,8 +573,22 @@ class vLLMModelSpec(ModelSpec):
         }
 
     def get_ports(self):
-        # Specifies the ports for service
+        # Specifies the ports for the container
         return [{"containerPort": 8000, "name": "http"}]
+
+    def get_service_ports(self):
+        # Specifies the ports for service
+        return [{"name": "http", "port": 8000, "targetPort": "http"}]
+
+    def get_service_monitor_endpoints(self):
+        # Specifies the ports for the service monitor
+        return [
+            {
+            "port": "http",
+            "path": "/metrics",
+            "interval": "1s"
+            }
+        ]
 
     def get_readiness_probe(self):
         # Runs a healthcheck on a running service
