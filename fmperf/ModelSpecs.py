@@ -216,7 +216,8 @@ class TGISModelSpec(ModelSpec):
                 "value": str(self.max_concurrent_requests),
             },
             {   "name": "DTYPE_STR",
-                "value": self.dtype_str},
+                "value": self.dtype_str
+            },
             {
                 "name": "DEPLOYMENT_FRAMEWORK",
                 "value": self.deployment_framework,
@@ -371,7 +372,7 @@ class TGISModelSpec(ModelSpec):
         ]
 
     def get_service_monitor_endpoints(self):
-        # Specifies the end-points for the service monitor
+        # Specifies the endpoints for the service monitor
         return [
             {
             "port": "http",
@@ -581,7 +582,7 @@ class vLLMModelSpec(ModelSpec):
         return [{"name": "http", "port": 8000, "targetPort": "http"}]
 
     def get_service_monitor_endpoints(self):
-        # Specifies the ports for the service monitor
+        # Specifies the endpoints for the service monitor
         return [
             {
             "port": "http",

@@ -195,7 +195,7 @@ class Cluster:
                 },
                 "spec": {
                     "selector": {"matchLabels": {"app": name}},
-                    "endpoints": self.get_service_monitor_endpoints()
+                    "endpoints": model.get_service_monitor_endpoints()
                 },
             }
 
