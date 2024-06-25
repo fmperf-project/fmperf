@@ -65,7 +65,6 @@ class HomogeneousWorkloadSpec(WorkloadSpec):
 
         super().__init__(1, image, pvc_name, overwrite)
 
-
     @classmethod
     def from_yaml(cls, file: str):
         return super().from_yaml(file)
@@ -102,6 +101,7 @@ class HomogeneousWorkloadSpec(WorkloadSpec):
             },
         ]
         return env
+
 
 class HeterogeneousWorkloadSpec(WorkloadSpec):
     def __init__(
