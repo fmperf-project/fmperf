@@ -1,6 +1,18 @@
 # Setting up a local k8s cluster
 
-Below, we provide instructions for creating a single-node, local kubernetes (k8s) cluster on a development machine **without** super-user permissions and **with** GPU support.
+Below, we provide instructions for creating a single-node, local kubernetes (k8s) cluster on a development machine **with** GPU support.
+
+## Prerequisites
+1. NVIDIA container toolkit is installed on the node.
+2. The default runtime runtime for Docker is set to NVIDIA:
+```
+sudo nvidia-ctk runtime configure --runtime=docker --set-as-default
+sudo systemctl restart docker
+```
+3. Configure the NVIDIA Container Runtime to use volume mounts to select devices to inject into a container.
+```
+sudo nvidia-ctk config --set accept-nvidia-visible-devices-as-volume-mounts=true --in-place
+```
 
 ## Install kubectl
 
@@ -40,26 +52,22 @@ $ helm version
 version.BuildInfo{Version:"v3.11.3", GitCommit:"323249351482b3bbfc9f5004f65d400aa70f9ae7", GitTreeState:"clean", GoVersion:"go1.20.3"}
 ```
 
-## Compile and install Kind
+## Install kind
 
-We can use `kind` to deploy a single-node k8s cluster on any development machine.
-Kind is preferable to others solutions like microk8s because it does not require sudo permissions.
-It does however require that the user be able to run docker containers (e.g., that the user is added to the docker group).
-Kind does not have GPU support, but there exists a [forked version](https://jacobtomlinson.dev/posts/2022/quick-hack-adding-gpu-support-to-kind/) (with minimal diff) enabling this.
-We start by compiling kind with GPU support from source:
 ```shell
-git clone -b gpu https://github.com/jacobtomlinson/kind
-cd kind
-make build
-mv bin/kind ~/bin/
+# Based on https://kind.sigs.k8s.io/docs/user/quick-start#installing-from-release-binaries
+# For AMD64 / x86_64
+[ $(uname -m) = x86_64 ] && curl -Lo ./kind https://kind.sigs.k8s.io/dl/v0.23.0/kind-linux-amd64
+chmod +x ./kind
+mv ./kind ~/bin/
 ```
 
 And verify the installation:
 ```shell
 $ which kind
-~/bin/kind
+/usr/local/bin/kind
 $ kind version
-kind (@jacobtomlinson's patched GPU edition) v0.18.0-alpha.702+ec8f4c936a5171 go1.19.3 linux/amd64
+kind v0.23.0 go1.21.10 linux/amd64
 ```
 
 ## Create k8s cluster
@@ -70,12 +78,12 @@ Firstly, create a file called `kind-gpu.yaml` with the following contents:
 ```yaml
 kind: Cluster
 apiVersion: kind.x-k8s.io/v1alpha4
-name: gpu-test
+name: fmperf-cluster
 nodes:
   - role: control-plane
-    image: kindest/node:v1.24.12@sha256:1e12918b8bc3d4253bc08f640a231bb0d3b2c5a9b28aa3f2ca1aee93e1e8db16
-    gpus: true
     extraMounts:
+      - hostPath: /dev/null
+        containerPath: /var/run/nvidia-container-devices/all
       - hostPath: /localhome/models
         containerPath: /models
       - hostPath: /localhome/requests
@@ -87,46 +95,47 @@ Please ensure that these directories (or their equivalent) exist and are both re
 Then execute the following which create the cluster:
 ```shell
 $ kind create cluster --config kind-gpu.yaml
-Creating cluster "gpu-test" ...
- ✓ Ensuring node image (kindest/node:v1.24.12) 🖼
+Creating cluster "fmperf-cluster" ...
+ ✓ Ensuring node image (kindest/node:v1.30.0) 🖼
  ✓ Preparing nodes 📦
  ✓ Writing configuration 📜
  ✓ Starting control-plane 🕹️
  ✓ Installing CNI 🔌
  ✓ Installing StorageClass 💾
-Set kubectl context to "kind-gpu-test"
+Set kubectl context to "kind-fmperf-cluster"
 You can now use your cluster with:
 
-kubectl cluster-info --context kind-gpu-test
+kubectl cluster-info --context kind-fmperf-cluster
 
 Have a question, bug, or feature request? Let us know! https://kind.sigs.k8s.io/#community 🙂
 ```
 
 Let's verify the status of the clusters with:
 ```shell
-$ kubectl cluster-info --context kind-gpu-test
-Kubernetes control plane is running at https://127.0.0.1:42303
-CoreDNS is running at https://127.0.0.1:42303/api/v1/namespaces/kube-system/services/kube-dns:dns/proxy
+$ kubectl cluster-info --context kind-fmperf-cluster
+
+Kubernetes control plane is running at https://127.0.0.1:36111
+CoreDNS is running at https://127.0.0.1:36111/api/v1/namespaces/kube-system/services/kube-dns:dns/proxy
 
 To further debug and diagnose cluster problems, use 'kubectl cluster-info dump'.
 ```
 ```shell
 $ kubectl get nodes
-NAME                     STATUS   ROLES           AGE   VERSION
-gpu-test-control-plane   Ready    control-plane   77s   v1.24.12
+NAME                           STATUS   ROLES           AGE     VERSION\
+fmperf-cluster-control-plane   Ready    control-plane   8m22s   v1.30.0
 ```
 ```shell
 $ kubectl get pods -A
-NAMESPACE            NAME                                             READY   STATUS    RESTARTS   AGE
-kube-system          coredns-57575c5f89-djgdt                         1/1     Running   0          50s
-kube-system          coredns-57575c5f89-kktz8                         1/1     Running   0          50s
-kube-system          etcd-gpu-test-control-plane                      1/1     Running   0          66s
-kube-system          kindnet-tdrcj                                    1/1     Running   0          51s
-kube-system          kube-apiserver-gpu-test-control-plane            1/1     Running   0          64s
-kube-system          kube-controller-manager-gpu-test-control-plane   1/1     Running   0          64s
-kube-system          kube-proxy-dd6r4                                 1/1     Running   0          51s
-kube-system          kube-scheduler-gpu-test-control-plane            1/1     Running   0          64s
-local-path-storage   local-path-provisioner-6dfffb7d87-czcv2          1/1     Running   0          50s
+NAMESPACE            NAME                                                   READY   STATUS    RESTARTS   AGE
+kube-system          coredns-7db6d8ff4d-hnlnw                               1/1     Running   0          8m30s
+kube-system          coredns-7db6d8ff4d-mxmpw                               1/1     Running   0          8m30s
+kube-system          etcd-fmperf-cluster-control-plane                      1/1     Running   0          8m45s
+kube-system          kindnet-sw8f9                                          1/1     Running   0          8m30s
+kube-system          kube-apiserver-fmperf-cluster-control-plane            1/1     Running   0          8m45s
+kube-system          kube-controller-manager-fmperf-cluster-control-plane   1/1     Running   0          8m45s
+kube-system          kube-proxy-5mb4x                                       1/1     Running   0          8m30s
+kube-system          kube-scheduler-fmperf-cluster-control-plane            1/1     Running   0          8m44s
+local-path-storage   local-path-provisioner-988d74bc-74ztt                  1/1     Running   0          8m30s
 ```
 
 ## Install NVIDIA GPU Operator
@@ -139,9 +148,7 @@ helm repo update
 helm install nvidia/gpu-operator \
   --wait --generate-name \
   --create-namespace -n gpu-operator \
-  --set driver.enabled=false \
-  --set mig.strategy=none \
-  --version 23.3.1
+  --set driver.enabled=false
 ```
 
 It takes a while until the associated pods are all up-and-running.
@@ -162,3 +169,7 @@ nvidia-operator-validator-ztpls                                   1/1     Runnin
 ```
 
 The cluster is now ready to run the benchmark. As a first try, run the examples/example_vllm.py script.
+
+## Troubleshooting
+1. If you see `/proc/driver/nvidia/capabilities: no such file or directory: unknown`
+Consider uninstalling the NVIDIA GPU operator, run `docker exec -it fmperf-cluster-control-plane umount -R /proc/driver/nvidia`, and then re-install the Nvidia GPU operator.
