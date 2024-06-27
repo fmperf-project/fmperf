@@ -95,5 +95,5 @@ if __name__ == "__main__":
         repetition=REPETITION,
         number_users=NUM_USERS,
         duration=DURATION,
-        prometheus_enabled=True
+        prometheus_enabled=True,
     )
