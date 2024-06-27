@@ -30,7 +30,9 @@ def initialize_kubernetes(location):
         config.verify_ssl = False
         apiclient = client.ApiClient(config)
         urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
-        cluster = Cluster(name="llm", apiclient=apiclient, namespace=os.environ["OPENSHIFT_NAMESPACE"])
+        cluster = Cluster(
+            name="llm", apiclient=apiclient, namespace=os.environ["OPENSHIFT_NAMESPACE"]
+        )
         model_pvcs = [("my-models-pvc", "/models")]
         workload_pvc_name = "my-workload-pvc"
         cluster_gpu_name = "NVIDIA-A100-SXM4-80GB"
@@ -84,7 +86,7 @@ if __name__ == "__main__":
             "/models/llama/7B",
             shortname="llama-7b",
             dtype="float16",
-            max_model_len=1024, #  this is needed if you have a V100 gpu. otherwise use max_model_len = None
+            max_model_len=1024,  #  this is needed if you have a V100 gpu. otherwise use max_model_len = None
             image="vllm/vllm-openai:latest",
             pvcs=model_pvcs,
             cluster_gpu_name=cluster_gpu_name,
