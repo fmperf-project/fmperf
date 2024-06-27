@@ -215,9 +215,7 @@ class TGISModelSpec(ModelSpec):
                 "name": "MAX_CONCURRENT_REQUESTS",
                 "value": str(self.max_concurrent_requests),
             },
-            {   "name": "DTYPE_STR",
-                "value": self.dtype_str
-            },
+            {"name": "DTYPE_STR", "value": self.dtype_str},
             {
                 "name": "DEPLOYMENT_FRAMEWORK",
                 "value": self.deployment_framework,
@@ -374,11 +372,7 @@ class TGISModelSpec(ModelSpec):
     def get_service_monitor_endpoints(self):
         # Specifies the endpoints for the service monitor
         return [
-            {
-            "port": "http",
-            "path": "/metrics",
-            "interval": "1s"
-            },
+            {"port": "http", "path": "/metrics", "interval": "1s"},
         ]
 
     def get_readiness_probe(self):
@@ -583,13 +577,7 @@ class vLLMModelSpec(ModelSpec):
 
     def get_service_monitor_endpoints(self):
         # Specifies the endpoints for the service monitor
-        return [
-            {
-            "port": "http",
-            "path": "/metrics",
-            "interval": "1s"
-            }
-        ]
+        return [{"port": "http", "path": "/metrics", "interval": "1s"}]
 
     def get_readiness_probe(self):
         # Runs a healthcheck on a running service
