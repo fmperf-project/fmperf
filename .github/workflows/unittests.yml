@@ -24,4 +24,4 @@ jobs:
 
     - name: Run tests
       run: |
-        pytest fmperf/tests/test_imports.py
+        pytest fmperf/tests/
