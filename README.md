@@ -59,7 +59,7 @@ Firstly, one can generate a set of requests assuming simple uniform distribution
 ```bash
 docker run --env-file .env -it --rm -v $(pwd)/requests:/requests fmperf python -m fmperf.loadgen.generate-input
 ```
-Alternatively, one can generate a set of requests using models that have been trained on requests sent to the internal production deployment of BAM:
+Alternatively, one can generate a set of requests using models that have been trained on requests sent to a production deployment:
 ```bash
 docker run --env-file .env -it --rm -v $(pwd)/requests:/requests fmperf python -m fmperf.loadgen.generate-input --from-model
 ```
