@@ -18,9 +18,10 @@ code = os.getenv("CODE", "false").lower() != "false"
 
 if code:
     import fmperf
-    tmp = fmperf.__file__.split('/')[:-1]
-    tmp.append('Cluster.py')
-    seed_text_file = '/'.join(tmp)
+
+    tmp = fmperf.__file__.split("/")[:-1]
+    tmp.append("Cluster.py")
+    seed_text_file = "/".join(tmp)
 else:
     seed_text_file = impresources.files(fmperf.data) / "ai.txt"
 

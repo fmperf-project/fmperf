@@ -51,7 +51,6 @@ class WorkloadSpec:
                 "value": str(self.code),
             },
             {"name": "REQUESTS_FILENAME", "value": outfile},
-
         ]
         return env
 
