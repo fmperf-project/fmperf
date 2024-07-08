@@ -25,6 +25,9 @@ if code:
 else:
     seed_text_file = impresources.files(fmperf.data) / "ai.txt"
 
+with open(seed_text_file, "r") as f:
+    text = f.read()
+
 parser = argparse.ArgumentParser()
 parser.add_argument("--import-text", help="json file name of input texts")
 parser.add_argument(
