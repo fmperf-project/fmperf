@@ -41,6 +41,7 @@ def run():
         )
 
         stop = False
+        prev_completion_tokens = 0
         while not stop:
             try:
                 chunk = next(response_iter)
@@ -49,8 +50,17 @@ def run():
                     data = chunk.decode("utf-8").strip().split("data: ")[1]
                     out = json.loads(data)["choices"][0]
                     stop = out["finish_reason"] is not None
-                    if not (out["text"] == ""):  # filter empty tokens
-                        yield out, 1, timestamp, True, None
+                    usage = json.loads(data)["usage"]
+                    token_count = usage["completion_tokens"] - prev_completion_tokens
+                    prev_completion_tokens = usage["completion_tokens"]
+                    for i in range(token_count):
+                        yield {
+                            'index': out['index'],
+                            'text': '' if (i < token_count - 1) else out['text'],
+                            'logprobs': None,
+                            'finish_reason': None if (i < token_count - 1) else out['finish_reason'],
+                            'stop_reason': None if (i < token_count - 1) else out['stop_reason']
+                        }, 1, timestamp, True, None
             except Exception as e:
                 timestamp = time.time_ns()
                 yield None, 0, timestamp, False, e

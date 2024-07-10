@@ -31,16 +31,31 @@ args = parser.parse_args()
 
 def get_streaming_response(response: requests.Response):
     finished = False
+    prev_completion_tokens = 0
     for chunk in response.iter_lines(
         chunk_size=8192, decode_unicode=False, delimiter=b"\n"
     ):
         if chunk and not finished:
             data = chunk.decode("utf-8").strip().split("data: ")[1]
-            out = json.loads(data)["choices"][0]
+            data_parsed = json.loads(data)
+            out = data_parsed["choices"][0]
             finished = out["finish_reason"] is not None
-            if not (out["text"] == ""):  # filter empty tokens
-                yield out
 
+            if ("usage" in data_parsed) and (data_parsed["usage"] is not None):
+                usage = data_parsed["usage"]
+                token_count = usage["completion_tokens"] - prev_completion_tokens
+                prev_completion_tokens = usage["completion_tokens"]
+                for i in range(token_count):
+                    yield {
+                        'index': out['index'],
+                        'text': '' if (i < token_count - 1) else out['text'],
+                        'logprobs': None,
+                        'finish_reason': None if (i < token_count - 1) else out['finish_reason'],
+                        'stop_reason': None if (i < token_count - 1) else out['stop_reason']
+                    }
+            else:
+                #raise Exception("No usage data in server response")
+                print("No usage data in server response")
 
 def get_text():
     if args.import_text:
@@ -71,7 +86,9 @@ def generate_vllm_request(config, url):
         "prompt": prompt_ids,
         "ignore_eos": True,
         "max_tokens": config["out_tokens"],
+        "seed": 42,
         "stream": True,
+        "stream_options" : { "include_usage": True, "continuous_usage_stats": True }
     }
 
     if not args.from_model:
