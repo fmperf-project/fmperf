@@ -14,13 +14,14 @@ def run_benchmark(
     number_users: int,
     duration: str,
     id: str = "",
+    prometheus_enabled: bool = False,
 ) -> None:
     if isinstance(model_spec, ModelSpec):
         model_spec = [model_spec]
 
     for spec in model_spec:
         # create the inference server
-        model = cluster.deploy_model(spec, id)
+        model = cluster.deploy_model(spec, id, prometheus_enabled=prometheus_enabled)
         # create the jobs for requests
         workload = cluster.generate_workload(model, workload_spec, id=id)
         for rep in range(repetition):
