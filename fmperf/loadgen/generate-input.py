@@ -47,14 +47,19 @@ def get_streaming_response(response: requests.Response):
                 prev_completion_tokens = usage["completion_tokens"]
                 for i in range(token_count):
                     yield {
-                        'index': out['index'],
-                        'text': '' if (i < token_count - 1) else out['text'],
-                        'logprobs': None,
-                        'finish_reason': None if (i < token_count - 1) else out['finish_reason'],
-                        'stop_reason': None if (i < token_count - 1) else out['stop_reason']
+                        "index": out["index"],
+                        "text": "" if (i < token_count - 1) else out["text"],
+                        "logprobs": None,
+                        "finish_reason": (
+                            None if (i < token_count - 1) else out["finish_reason"]
+                        ),
+                        "stop_reason": (
+                            None if (i < token_count - 1) else out["stop_reason"]
+                        ),
                     }
             else:
                 raise RuntimeError("No usage data in server response")
+
 
 def get_text():
     if args.import_text:
@@ -87,7 +92,7 @@ def generate_vllm_request(config, url):
         "max_tokens": config["out_tokens"],
         "seed": 42,
         "stream": True,
-        "stream_options" : { "include_usage": True, "continuous_usage_stats": True }
+        "stream_options": {"include_usage": True, "continuous_usage_stats": True},
     }
 
     if not args.from_model:

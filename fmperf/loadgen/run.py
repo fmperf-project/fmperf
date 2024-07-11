@@ -55,11 +55,15 @@ def run():
                     prev_completion_tokens = usage["completion_tokens"]
                     for i in range(token_count):
                         yield {
-                            'index': out['index'],
-                            'text': '' if (i < token_count - 1) else out['text'],
-                            'logprobs': None,
-                            'finish_reason': None if (i < token_count - 1) else out['finish_reason'],
-                            'stop_reason': None if (i < token_count - 1) else out['stop_reason']
+                            "index": out["index"],
+                            "text": "" if (i < token_count - 1) else out["text"],
+                            "logprobs": None,
+                            "finish_reason": (
+                                None if (i < token_count - 1) else out["finish_reason"]
+                            ),
+                            "stop_reason": (
+                                None if (i < token_count - 1) else out["stop_reason"]
+                            ),
                         }, 1, timestamp, True, None
             except Exception as e:
                 timestamp = time.time_ns()
