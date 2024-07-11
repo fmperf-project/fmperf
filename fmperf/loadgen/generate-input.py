@@ -54,8 +54,7 @@ def get_streaming_response(response: requests.Response):
                         'stop_reason': None if (i < token_count - 1) else out['stop_reason']
                     }
             else:
-                #raise Exception("No usage data in server response")
-                print("No usage data in server response")
+                raise RuntimeError("No usage data in server response")
 
 def get_text():
     if args.import_text:
