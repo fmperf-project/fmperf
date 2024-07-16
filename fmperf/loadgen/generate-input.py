@@ -21,6 +21,7 @@ with open(seed_text_file, "r") as f:
 
 parser = argparse.ArgumentParser()
 parser.add_argument("--import-text", help="json file name of input texts")
+parser.add_argument("--from-tokens", help="json file name of input tokens")
 parser.add_argument(
     "--from-model",
     help="generate requests according to requests model",
@@ -81,14 +82,16 @@ text_generator = get_text()
 def generate_vllm_request(config, url):
     model = requests.get("http://%s/v1/models" % (url)).json()["data"][0]["id"]
 
-    tokenizer = AutoTokenizer.from_pretrained(model)
-
-    prompt_ids = tokenizer(next(text_generator)).input_ids[-config["in_tokens"] :]
+    if 'prompt_ids' not in config.keys():
+        tokenizer = AutoTokenizer.from_pretrained(model)
+        prompt_ids = tokenizer(next(text_generator)).input_ids[-config["in_tokens"] :]
+    else:
+        prompt_ids = config['prompt_ids']
 
     request = {
         "model": model,
         "prompt": prompt_ids,
-        "ignore_eos": True,
+        "ignore_eos": False,
         "max_tokens": config["out_tokens"],
         "seed": 42,
         "stream": True,
@@ -124,7 +127,7 @@ def generate_vllm_request(config, url):
         expected.append(r)
 
     # let's check if we get one output per token (not the case for TGIS)
-    assert len(expected) == config["out_tokens"]
+    #assert len(expected) == config["out_tokens"]
 
     return request, expected
 
@@ -140,7 +143,7 @@ def generate_tgis_request(config, url):
     params = {
         "method": "GREEDY" if config["is_greedy"] else "SAMPLE",
         "stopping": {
-            "minNewTokens": config["out_tokens"],
+            #"minNewTokens": config["out_tokens"],
             "maxNewTokens": config["out_tokens"],
         },
         "sampling": {
@@ -149,11 +152,17 @@ def generate_tgis_request(config, url):
         "truncate_input_tokens": config["in_tokens"],
     }
 
+    if 'prompt_ids' in config.keys():
+        tokenizer = AutoTokenizer.from_pretrained("ibm-granite/granite-20b-code-instruct")
+        text = tokenizer.decode(config['prompt_ids'])
+    else:
+        text = next(text_generator)
+
     request = {
         "model_id": "null",
         "params": params,
         "request": {
-            "text": next(text_generator),
+            "text": text,
         },
     }
 
@@ -207,6 +216,15 @@ if os.path.isfile("/requests/%s" % (filename)) and not overwrite:
     sys.exit()
 
 
+if args.from_tokens:
+    tokens = json.load(open(args.from_tokens, "r"))
+    sample_size = len(tokens)
+    prompt_lens = []
+    for prompt in tokens:
+        prompt_lens.append(len(prompt))
+    min_in_tokens = min(prompt_lens)
+    max_in_tokens = max(prompt_lens)
+
 print(">> ---------------------------------")
 print(">> Generating heterogeneous requests")
 print(">> ---------------------------------")
@@ -253,6 +271,15 @@ for sample_idx in range(sample_size):
             "temperature": sample["params.temperature"],
             "top_k": sample["params.top_k"],
             "top_p": sample["params.top_p"],
+        }
+    elif args.from_tokens:
+        config = {
+            "in_tokens": len(tokens[sample_idx]),
+            "prompt_ids": tokens[sample_idx],
+            "out_tokens": np.random.randint(
+                low=min_out_tokens, high=max_out_tokens + 1
+            ),
+            "is_greedy": np.random.uniform() < frac_greedy,
         }
     else:
         config = {
