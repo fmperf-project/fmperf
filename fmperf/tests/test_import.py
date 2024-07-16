@@ -3,9 +3,14 @@ import logging
 
 
 # Configure logging
-logging.basicConfig(filename='test_logs.log', level=logging.DEBUG,
-                    format='%(asctime)s %(levelname)s:%(message)s', filemode='w')
-logging.debug('Logging configured successfully')
+logging.basicConfig(
+    filename="test_logs.log",
+    level=logging.DEBUG,
+    format="%(asctime)s %(levelname)s:%(message)s",
+    filemode="w",
+)
+logging.debug("Logging configured successfully")
+
 
 # Test class to check if the imports are working for the files in the examples folder
 class TestImports(unittest.TestCase):
@@ -21,12 +26,14 @@ class TestImports(unittest.TestCase):
         """Test if fmperf import works correctly."""
         try:
             import fmperf
+
             self.assertIsNotNone(fmperf)
             logging.info("test_fmperf_import passed.")
         except Exception as e:
             logging.error(f"test_fmperf_import failed: {e}")
             raise
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     unittest.main()
     logging.getLogger().handlers[0].flush()
