@@ -6,7 +6,7 @@ import pandas as pd
 import os
 from durations import Duration
 import numpy as np
-from text_generation_tests.approx import approx
+from fmperf.utils.approx import approx
 import grpc
 from google.protobuf import json_format
 from fmperf.utils import parse_results
