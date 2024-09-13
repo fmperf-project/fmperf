@@ -9,7 +9,6 @@ import numpy as np
 from text_generation_tests.approx import approx
 import grpc
 from google.protobuf import json_format
-from text_generation_tests.pb import generation_pb2_grpc as gpb2, generation_pb2 as pb2
 from fmperf.utils import parse_results
 from datetime import datetime
 from .collect_energy import collect_metrics, summarize_energy
@@ -88,6 +87,7 @@ def run():
         rs = np.random.RandomState(seed=wid)
 
         if target == "tgis":
+            from text_generation_tests.pb import generation_pb2_grpc as gpb2
             stub = gpb2.GenerationServiceStub(channel)
 
         t_start = time.time_ns()
@@ -111,6 +111,7 @@ def run():
                     stream=True,
                 )
             elif target == "tgis":
+                from text_generation_tests.pb import generation_pb2 as pb2
                 message = json_format.ParseDict(
                     sample_request, pb2.SingleGenerationRequest()
                 )
