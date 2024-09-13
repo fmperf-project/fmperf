@@ -2,6 +2,7 @@ import os
 import json
 from .run import run
 from fmperf.utils import parse_results
+from fmperf.utils.constants import REQUESTS_DIR, RESULTS_ALL_FILENAME
 
 users = [int(u) for u in os.environ["SWEEP_USERS"].split(",")]
 
@@ -13,7 +14,7 @@ for u in users:
 
     run()
 
-    filename = "/requests/result_sweep_u%d.json" % (u)
+    filename = "%srequests/result_sweep_u%d.json" % (REQUESTS_DIR, u)
 
     with open(filename, "rb") as f:
         tmp = json.load(f)
@@ -22,7 +23,7 @@ for u in users:
 
     parse_results(results, print_df=True)
 
-outfile = f"/requests/{os.environ['RESULTS_ALL_FILENAME']}"
+outfile = f"{REQUESTS_DIR}{RESULTS_ALL_FILENAME}"
 print(f">> writing all results to file: {outfile}")
 with open(outfile, "w") as f:
     json.dump(results, f)

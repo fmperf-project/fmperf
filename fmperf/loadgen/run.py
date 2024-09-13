@@ -13,6 +13,7 @@ from text_generation_tests.pb import generation_pb2_grpc as gpb2, generation_pb2
 from fmperf.utils import parse_results
 from datetime import datetime
 from .collect_energy import collect_metrics, summarize_energy
+from fmperf.utils.constants import REQUESTS_DIR, REQUESTS_FILENAME, RESULTS_ALL_FILENAME
 
 
 def run():
@@ -72,8 +73,8 @@ def run():
         # we have stopped
         yield None, 0, time.time_ns(), False, StopIteration()
 
-    infile = "/requests/%s" % (os.environ["REQUESTS_FILENAME"])
-    outfile = "/requests/%s" % (os.environ["RESULTS_FILENAME"])
+    infile = "%s%s" % (REQUESTS_DIR, REQUESTS_FILENAME)
+    outfile = "%s%s" % (REQUESTS_DIR, RESULTS_FILENAME)
     target = os.environ["TARGET"]
     api_url = os.environ["URL"]
     num_users = int(os.environ["NUM_USERS"])
