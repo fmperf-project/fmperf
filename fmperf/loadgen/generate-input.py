@@ -133,7 +133,11 @@ def generate_tgis_request(config, url):
     Generate (streaming) gRPC request and expected response
     """
 
-    from text_generation_tests.pb import generation_pb2_grpc as gpb2, generation_pb2 as pb2
+    from text_generation_tests.pb import (
+        generation_pb2_grpc as gpb2,
+        generation_pb2 as pb2,
+    )
+
     channel = grpc.insecure_channel(url)
     stub = gpb2.GenerationServiceStub(channel)
 

@@ -88,6 +88,7 @@ def run():
 
         if target == "tgis":
             from text_generation_tests.pb import generation_pb2_grpc as gpb2
+
             stub = gpb2.GenerationServiceStub(channel)
 
         t_start = time.time_ns()
@@ -112,6 +113,7 @@ def run():
                 )
             elif target == "tgis":
                 from text_generation_tests.pb import generation_pb2 as pb2
+
                 message = json_format.ParseDict(
                     sample_request, pb2.SingleGenerationRequest()
                 )
