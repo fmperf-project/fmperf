@@ -6,7 +6,6 @@ import os
 import grpc
 import pickle
 from google.protobuf import json_format
-from text_generation_tests.pb import generation_pb2_grpc as gpb2, generation_pb2 as pb2
 import requests
 from typing import Iterable, List
 from importlib import resources as impresources
@@ -133,6 +132,11 @@ def generate_tgis_request(config, url):
     """
     Generate (streaming) gRPC request and expected response
     """
+
+    from text_generation_tests.pb import (
+        generation_pb2_grpc as gpb2,
+        generation_pb2 as pb2,
+    )
 
     channel = grpc.insecure_channel(url)
     stub = gpb2.GenerationServiceStub(channel)
