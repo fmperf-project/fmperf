@@ -72,8 +72,8 @@ def run():
         # we have stopped
         yield None, 0, time.time_ns(), False, StopIteration()
 
-    infile = "%s%s" % (REQUESTS_DIR, REQUESTS_FILENAME)
-    outfile = "%s%s" % (REQUESTS_DIR, RESULTS_FILENAME)
+    infile = os.path.join(REQUESTS_DIR, REQUESTS_FILENAME)
+    outfile = os.path.join(REQUESTS_DIR, RESULTS_FILENAME)
     target = os.environ["TARGET"]
     api_url = os.environ["URL"]
     num_users = int(os.environ["NUM_USERS"])

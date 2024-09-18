@@ -168,7 +168,7 @@ def main():
     quac = QuACScenario()
     prompts = quac.get_prompts()
 
-    filename = "{REQUESTS_DIR}/sample_texts.json"
+    filename = os.path.join(REQUESTS_DIR, "sample_texts.json")
     print(">> Writing to %s" % (filename))
     with open(filename, "w") as f:
         json.dump(prompts, f, ensure_ascii=False)
