@@ -1,5 +1,5 @@
 import os
 
-REQUESTS_DIR = os.environ.get("REQUESTS_DIR", "")
+REQUESTS_DIR = os.environ.get("REQUESTS_DIR", ".")
 REQUESTS_FILENAME = os.environ["REQUESTS_FILENAME"]
 RESULTS_ALL_FILENAME = os.environ["RESULTS_ALL_FILENAME"]
