@@ -60,15 +60,15 @@ def parse_results(results, print_df=False, print_csv=False):
 
     df_out["latency_prefill_ms"] = df_prefill.groupby(["exp_num_users"])[
         "duration_ms"
-    ].median()
+    ].mean()
     df_out["latency_nexttoken_ms"] = df_nexttoken.groupby(["exp_num_users"])[
         "duration_ms"
-    ].median()
+    ].mean()
     df_out["latency_e2e_ms"] = (
         df.groupby(["exp_num_users", "worker_idx", "request_idx"])["duration_ms"]
         .sum()
         .groupby("exp_num_users")
-        .median()
+        .mean()
     )
 
     with pd.option_context(
