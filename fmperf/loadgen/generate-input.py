@@ -12,6 +12,7 @@ from importlib import resources as impresources
 import fmperf.data
 import traceback
 from transformers import AutoTokenizer
+from fmperf.utils.constants import REQUESTS_DIR
 
 # read in seed text
 seed_text_file = impresources.files(fmperf.data) / "ai.txt"
@@ -206,7 +207,7 @@ url = os.environ["URL"]
 # overwrite
 overwrite = os.getenv("OVERWRITE", "false").lower() != "false"
 
-if os.path.isfile("/requests/%s" % (filename)) and not overwrite:
+if os.path.isfile(os.path.join(REQUESTS_DIR, filename)) and not overwrite:
     print("File %s already exists; skipping workload generation" % (filename))
     sys.exit()
 
@@ -287,5 +288,5 @@ for sample_idx in range(sample_size):
 
 if len(cases) > 0:
     print(">> Writing %d requests to %s" % (len(cases), filename))
-    with open("/requests/%s" % (filename), "w") as f:
+    with open(os.path.join(REQUESTS_DIR, filename), "w") as f:
         json.dump(cases, f)

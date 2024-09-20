@@ -4,6 +4,7 @@ import os
 import random
 import requests
 from typing import List, Tuple
+from fmperf.utils.constants import REQUESTS_DIR
 
 
 class QuACScenario:
@@ -167,7 +168,7 @@ def main():
     quac = QuACScenario()
     prompts = quac.get_prompts()
 
-    filename = "/requests/sample_texts.json"
+    filename = os.path.join(REQUESTS_DIR, "sample_texts.json")
     print(">> Writing to %s" % (filename))
     with open(filename, "w") as f:
         json.dump(prompts, f, ensure_ascii=False)
