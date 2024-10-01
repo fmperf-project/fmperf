@@ -199,10 +199,13 @@ def run():
 
     def check_consistent(row):
         if row["ok"]:
-            tmp = sample_requests[row["sample_idx"]]["expected"]
-            tmp = tmp[row["response_idx"]]
-            consistent = row["response"] == approx(tmp)
-            return consistent
+            try:
+                tmp = sample_requests[row["sample_idx"]]["expected"]
+                tmp = tmp[row["response_idx"]]
+                consistent = row["response"] == approx(tmp)
+                return consistent
+            except:
+                return False
         else:
             return False
 

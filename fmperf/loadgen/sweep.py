@@ -22,7 +22,7 @@ for u in users:
 
     parse_results(results, print_df=True)
 
-outfile = f"/requests/{os.environ['RESULTS_ALL_FILENAME']}"
-print(f">> writing all results to file: {outfile}")
-with open(outfile, "w") as f:
-    json.dump(results, f)
+    outfile = f"/requests/{os.environ['RESULTS_ALL_FILENAME']}"
+    print(f">> writing all results to file: {outfile}")
+    with open(outfile, "w") as f:
+        json.dump(results, f)
