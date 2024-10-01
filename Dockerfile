@@ -82,5 +82,6 @@ WORKDIR /home/fmperf
 # Set permissions for openshift
 RUN chmod -R g+rwx /home/fmperf
 
+ENV REQUESTS_DIR=/requests
 # Sanity check: We can import the installed wheel
 RUN python -c "import ${SOURCE_DIR}"

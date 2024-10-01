@@ -6,13 +6,13 @@ import os
 import grpc
 import pickle
 from google.protobuf import json_format
-from text_generation_tests.pb import generation_pb2_grpc as gpb2, generation_pb2 as pb2
 import requests
 from typing import Iterable, List
 from importlib import resources as impresources
 import fmperf.data
 import traceback
 from transformers import AutoTokenizer
+from fmperf.utils.constants import REQUESTS_DIR
 
 # read in seed text
 seed_text_file = impresources.files(fmperf.data) / "ai.txt"
@@ -138,6 +138,11 @@ def generate_tgis_request(config, url):
     Generate (streaming) gRPC request and expected response
     """
 
+    from text_generation_tests.pb import (
+        generation_pb2_grpc as gpb2,
+        generation_pb2 as pb2,
+    )
+
     channel = grpc.insecure_channel(url)
     stub = gpb2.GenerationServiceStub(channel)
 
@@ -212,7 +217,7 @@ url = os.environ["URL"]
 # overwrite
 overwrite = os.getenv("OVERWRITE", "false").lower() != "false"
 
-if os.path.isfile("/requests/%s" % (filename)) and not overwrite:
+if os.path.isfile(os.path.join(REQUESTS_DIR, filename)) and not overwrite:
     print("File %s already exists; skipping workload generation" % (filename))
     sys.exit()
 
@@ -311,5 +316,5 @@ for sample_idx in range(sample_size):
 
 if len(cases) > 0:
     print(">> Writing %d requests to %s" % (len(cases), filename))
-    with open("/requests/%s" % (filename), "w") as f:
+    with open(os.path.join(REQUESTS_DIR, filename), "w") as f:
         json.dump(cases, f)
