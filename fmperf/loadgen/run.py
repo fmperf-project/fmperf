@@ -7,8 +7,8 @@ import os
 from durations import Duration
 import numpy as np
 from fmperf.utils.approx import approx
-import grpc
-from google.protobuf import json_format
+#import grpc
+#from google.protobuf import json_format
 from fmperf.utils import parse_results
 from datetime import datetime
 from .collect_energy import collect_metrics, summarize_energy
@@ -73,7 +73,7 @@ def run():
         yield None, 0, time.time_ns(), False, StopIteration()
 
     infile = os.path.join(REQUESTS_DIR, REQUESTS_FILENAME)
-    outfile = os.path.join(REQUESTS_DIR, RESULTS_FILENAME)
+    outfile = os.path.join(REQUESTS_DIR, os.environ["RESULTS_FILENAME"])
     target = os.environ["TARGET"]
     api_url = os.environ["URL"]
     num_users = int(os.environ["NUM_USERS"])

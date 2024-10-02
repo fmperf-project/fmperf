@@ -3,9 +3,9 @@ import numpy as np
 import sys
 import json
 import os
-import grpc
+#import grpc
 import pickle
-from google.protobuf import json_format
+#from google.protobuf import json_format
 import requests
 from typing import Iterable, List
 from importlib import resources as impresources
@@ -91,10 +91,8 @@ def generate_vllm_request(config, url):
     request = {
         "model": model,
         "prompt": prompt_ids,
-        "ignore_eos": False,
-        #"min_tokens": config["out_tokens"],
+        "min_tokens": config["out_tokens"],
         "max_tokens": config["out_tokens"],
-        #"seed": 42,
         "stream": True,
         "stream_options": {"include_usage": True, "continuous_usage_stats": True},
     }
@@ -113,6 +111,7 @@ def generate_vllm_request(config, url):
 
     headers = {"User-Agent": "Test Client"}
 
+    '''
     response = requests.post(
         "http://%s/v1/completions" % (url),
         headers=headers,
@@ -126,6 +125,8 @@ def generate_vllm_request(config, url):
     expected = []
     for r in get_streaming_response(response):
         expected.append(r)
+    '''
+    expected = None
 
     # let's check if we get one output per token (not the case for TGIS)
     #assert len(expected) == config["out_tokens"]
