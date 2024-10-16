@@ -162,3 +162,27 @@ nvidia-operator-validator-ztpls                                   1/1     Runnin
 ```
 
 The cluster is now ready to run the benchmark. As a first try, run the examples/example_vllm.py script.
+
+
+## Prometheus (Optional)
+
+```shell
+# Run
+helm repo add prometheus-community https://prometheus-community.github.io/helm-charts
+```
+
+# Run (to enable collection of TGIS and vLLM metrics)
+```shell
+helm install prometheus-community/kube-prometheus-stack --create-namespace --namespace monitoring --generate-name
+```
+
+INSTEAD (/OR)
+
+```shell
+# To also enable collection of DCGM metrics in addition to TGIS and vLLM metrics, follow steps at <https://docs.nvidia.com/datacenter/cloud-native/gpu-telemetry/latest/kube-prometheus.html> to amend /tmp/kube-prometheus-stack.values
+```
+
+```shell
+# Run
+helm install prometheus-community/kube-prometheus-stack --create-namespace --namespace monitoring --generate-name --values /tmp/kube-prometheus-stack.values
+```
