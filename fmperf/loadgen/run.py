@@ -15,7 +15,9 @@ from .collect_energy import collect_metrics, summarize_energy
 from fmperf.utils.constants import REQUESTS_DIR, REQUESTS_FILENAME, RESULTS_ALL_FILENAME
 
 
-def run():
+def run(result_filename = None):
+    if result_filename is None:
+        result_filename = RESULTS_ALL_FILENAME
     def get_streaming_response_tgis(response):
         stop = False
         generated_tokens = 0
@@ -73,7 +75,7 @@ def run():
         yield None, 0, time.time_ns(), False, StopIteration()
 
     infile = os.path.join(REQUESTS_DIR, REQUESTS_FILENAME)
-    outfile = os.path.join(REQUESTS_DIR, RESULTS_FILENAME)
+    outfile = os.path.join(REQUESTS_DIR, result_filename)
     target = os.environ["TARGET"]
     api_url = os.environ["URL"]
     num_users = int(os.environ["NUM_USERS"])
