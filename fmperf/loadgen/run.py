@@ -15,9 +15,10 @@ from .collect_energy import collect_metrics, summarize_energy
 from fmperf.utils.constants import REQUESTS_DIR, REQUESTS_FILENAME, RESULTS_ALL_FILENAME
 
 
-def run(result_filename = None):
+def run(result_filename=None):
     if result_filename is None:
         result_filename = RESULTS_ALL_FILENAME
+
     def get_streaming_response_tgis(response):
         stop = False
         generated_tokens = 0
