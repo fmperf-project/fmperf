@@ -248,7 +248,7 @@ class Cluster:
                             {
                                 "name": "fmaas-perf",
                                 "image": workload.image,
-                                "imagePullPolicy": "IfNotPresent",
+                                "imagePullPolicy": "Always",
                                 "env": workload.get_env(target, model, outfile),
                                 "command": ["/bin/bash", "-ce"],
                                 "args": workload.get_args(),
@@ -402,7 +402,7 @@ class Cluster:
                         "containers": [
                             {
                                 "name": "fmaas-perf",
-                                "imagePullPolicy": "IfNotPresent",
+                                "imagePullPolicy": "Always",
                                 "image": workload.spec.image,
                                 "env": env,
                                 "command": ["/bin/bash", "-ce"],
