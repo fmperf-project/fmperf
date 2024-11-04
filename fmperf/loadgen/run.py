@@ -12,12 +12,12 @@ from google.protobuf import json_format
 from fmperf.utils import parse_results
 from datetime import datetime
 from .collect_energy import collect_metrics, summarize_energy
-from fmperf.utils.constants import REQUESTS_DIR, REQUESTS_FILENAME, RESULTS_ALL_FILENAME
+from fmperf.utils.constants import REQUESTS_DIR, REQUESTS_FILENAME, RESULTS_FILENAME
 
 
 def run(result_filename=None):
     if result_filename is None:
-        result_filename = RESULTS_ALL_FILENAME
+        result_filename = RESULTS_FILENAME
 
     def get_streaming_response_tgis(response):
         stop = False
