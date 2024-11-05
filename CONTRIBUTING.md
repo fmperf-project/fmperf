@@ -17,7 +17,7 @@ fmperf is a community-driven project that thrives on the active participation an
 
 ## Find something to work on
 
-We are here to support your contributions to fmperf, whether it's through code refactoring, developing new features, fixing critical bugs, or getting your work reviewed and merged. Some critical areas in our [ROADMAP](/ROADMAP.md) can also be picked up by you.
+We are here to support your contributions to fmperf, whether it's through code refactoring, developing new features, fixing critical bugs, or getting your work reviewed and merged.
 
 If you have questions about fmperf and about ways to contribute, [file an issue](https://github.com/fmperf-project/fmperf/issues/new). Alternatively, if you are interested in resolving an issue, the maintainer can assign it to you. We are excited to collaborate with you.
 
