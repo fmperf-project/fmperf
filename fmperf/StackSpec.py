@@ -1,7 +1,7 @@
 import yaml
 import requests
 import time
-from typing import Optional
+from typing import Optional, List
 
 class StackSpec:
     """
@@ -39,7 +39,7 @@ class StackSpec:
         """Configure stack-specific defaults"""
         if self.stack_type == "aibrix":
             if not self.endpoint_url:
-                self.endpoint_url = "http://aibrix-router:8000"
+                self.endpoint_url = "aibrix-router:8000"
             if not self.health_check_path:
                 self.health_check_path = "/v1/health"
             if not self.api_version:
@@ -47,14 +47,14 @@ class StackSpec:
 
         elif self.stack_type == "dynamo":
             if not self.endpoint_url:
-                self.endpoint_url = "http://dynamo-router:8000"
+                self.endpoint_url = "dynamo-router:8000"
             if not self.health_check_path:
                 self.health_check_path = "/health"
 
         elif self.stack_type == "vllm-prod":
             if not self.endpoint_url:
                 # Use the in-cluster service name and port
-                self.endpoint_url = "http://vllm-router-service:80"
+                self.endpoint_url = "vllm-router-service:80"
             if not self.health_check_path:
                 self.health_check_path = "/health"
 
@@ -97,6 +97,10 @@ class StackSpec:
         base = self.get_service_url()
         return f"{base}{self.health_check_path}"
 
+    def get_client_url(self) -> str:
+        """Get the client endpoint URL"""
+        return self.endpoint_url
+
     def refresh_models(self, force: bool = False) -> Optional[list[str]]:
         """
         Refresh the list of available models from the stack's models endpoint.
@@ -113,7 +117,7 @@ class StackSpec:
 
         try:
             response = requests.get(
-                self.get_models_url(),
+                self.get_client_url() + "/v1/models",
                 headers=self.get_headers(),
                 timeout=self.timeout
             )
@@ -134,6 +138,16 @@ class StackSpec:
         except Exception as e:
             print(f"Failed to refresh models list: {str(e)}")
             return None
+
+    def get_available_models(self) -> List[str]:
+        """Get the list of available models in the stack.
+        
+        Returns:
+            List of model names available in the stack
+        """
+        if not self.models:
+            self.refresh_models()
+        return self.models
 
     @classmethod
     def from_yaml(cls, file: str):

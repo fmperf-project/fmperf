@@ -1,12 +1,12 @@
 import pandas as pd
 import os
-from typing import List, Optional
+from typing import List, Optional, Union
 
 from fmperf import Cluster
 from fmperf.ModelSpecs import ModelSpec
 from fmperf.StackSpec import StackSpec
+from fmperf.DeployedModel import DeployedModel
 from fmperf.utils import parse_results
-from fmperf.Cluster import DeployedModel
 
 
 # Run benchmark for models or stack deployment
@@ -62,25 +62,22 @@ def run_benchmark(
                         if output is not None:
                             results.extend(output)
                     df = parse_results(results, print_df=True)
-                    df.to_csv(os.path.join("/requests", f"result{rep}.csv"))
+                    df.to_csv(f"result{rep}.csv")
             finally:
                 # Always clean up model deployment
                 cluster.delete_model(model)
     else:
         # Handle stack case - no deployment needed
-        model = DeployedModel(
-            spec=stack_spec,
-            name=stack_spec.name,
-            url=stack_spec.get_service_url()
-        )
-        # Run benchmarks
-        workload = cluster.generate_workload(model, workload_spec, id=id)
+        # Refresh available models in the stack
+        stack_spec.refresh_models()
+        # Run benchmarks directly with stack_spec
+        workload = cluster.generate_workload(stack_spec, workload_spec, id=id)
         for rep in range(repetition):
             print(f"Performing sweep with {workload.file}")
             results = []
             for num_users in number_users:
                 output, _ = cluster.evaluate(
-                    model,
+                    stack_spec,
                     workload,
                     num_users=num_users,
                     duration=duration,
@@ -89,4 +86,4 @@ def run_benchmark(
                 if output is not None:
                     results.extend(output)
             df = parse_results(results, print_df=True)
-            df.to_csv(os.path.join("/requests", f"result{rep}.csv"))
+            df.to_csv(f"result{rep}.csv")

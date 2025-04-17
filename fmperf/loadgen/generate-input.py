@@ -79,9 +79,18 @@ text_generator = get_text()
 
 
 def generate_vllm_request(config, url):
-    model = requests.get("http://%s/v1/models" % (url)).json()["data"][0]["id"]
+    # Remove http:// prefix if present to avoid duplication
+    url_no_prefix = url.replace("http://", "")
+    
+    model = requests.get("http://%s/v1/models" % (url_no_prefix)).json()["data"][0]["id"]
 
-    tokenizer = AutoTokenizer.from_pretrained(model)
+    # Set Hugging Face token if available in environment
+    hf_token = os.environ.get("HUGGINGFACE_TOKEN") or os.environ.get("HF_TOKEN")
+    tokenizer_kwargs = {}
+    if hf_token:
+        tokenizer_kwargs["token"] = hf_token
+        
+    tokenizer = AutoTokenizer.from_pretrained(model, **tokenizer_kwargs)
 
     prompt_ids = tokenizer(next(text_generator)).input_ids[-config["in_tokens"] :]
 
@@ -110,7 +119,7 @@ def generate_vllm_request(config, url):
     headers = {"User-Agent": "Test Client"}
 
     response = requests.post(
-        "http://%s/v1/completions" % (url),
+        "http://%s/v1/completions" % (url_no_prefix),
         headers=headers,
         json=request,
         stream=True,
@@ -275,10 +284,10 @@ for sample_idx in range(sample_size):
     try:
         if target == "tgis":
             case["request"], case["expected"] = generate_tgis_request(config, url)
-        elif target == "vllm":
+        elif target == "vllm":  # StackSpec will also use this
             case["request"], case["expected"] = generate_vllm_request(config, url)
         else:
-            raise ValueError("invalid target")
+            raise ValueError(f"Invalid target: {target}")
 
         print(json.dumps(case, indent=4))
         cases.append(case)

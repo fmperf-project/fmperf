@@ -162,3 +162,6 @@ cython_debug/
 test/result_*
 examples/*.csv
 examples/*.json
+
+# VS Code
+.vscode/

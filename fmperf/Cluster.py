@@ -1,20 +1,16 @@
 import hashlib
 import json
 import typing
+from typing import Union
 
 import pandas as pd
 from kubernetes import client
 
 from fmperf.ModelSpecs import ModelSpec, TGISModelSpec, vLLMModelSpec
+from fmperf.StackSpec import StackSpec
+from fmperf.DeployedModel import DeployedModel
 from fmperf.utils import Creating, Deleting, Waiting, make_logger
 from fmperf.WorkloadSpecs import WorkloadSpec
-
-
-class DeployedModel:
-    def __init__(self, spec: ModelSpec, name: str, url: str):
-        self.spec = spec
-        self.name = name
-        self.url = url
 
 
 class GeneratedWorkload:
@@ -37,6 +33,7 @@ class Cluster:
             "allowPrivilegeEscalation": False,
             "capabilities": {"drop": ["ALL"]},
             "runAsNonRoot": False,
+            "runAsUser": 0,
             "seccompProfile": {"type": "RuntimeDefault"},
         }
 
@@ -211,22 +208,35 @@ class Cluster:
 
     def generate_workload(
         self,
-        model: DeployedModel,
+        model: Union[DeployedModel, StackSpec],
         workload: WorkloadSpec,
         filename: typing.Optional[str] = None,
         id: str = "",
     ) -> GeneratedWorkload:
-        if type(model.spec) is vLLMModelSpec:
-            target = "vllm"
+        if isinstance(model, DeployedModel):
+            if isinstance(model.spec, vLLMModelSpec):
+                target = "vllm"
+            elif isinstance(model.spec, TGISModelSpec):
+                target = "tgis"
+            else:
+                raise TypeError("Unrecognized spec type in DeployedModel")
+            model_spec = model.spec
+            model_name = model.name
+            model_url = model.url
+        elif isinstance(model, StackSpec):
+            target = "vllm"  # StackSpec always uses vLLM API
+            model_spec = model
+            model_name = workload.model_name if hasattr(workload, 'model_name') else model.get_available_models()[0]
+            model_url = model.get_service_url()
         else:
-            target = "tgis"
+            raise TypeError("model must be either DeployedModel or StackSpec")
 
         if filename is not None:
             outfile = filename
         else:
             # creating a unique ID for the workload file using hash of
             # both model spec and workload spec
-            s1 = json.dumps(model.spec.__dict__, sort_keys=True)
+            s1 = json.dumps(model_spec.__dict__, sort_keys=True)
             s2 = json.dumps(workload.__dict__, sort_keys=True)
             hash = hashlib.md5((s1 + s2).encode("utf-8")).hexdigest()
             outfile = "workload-%s.json" % (hash)
@@ -282,12 +292,16 @@ class Cluster:
         return GeneratedWorkload(spec=workload, file=outfile, target=target)
 
     def __get_volumes_workload(self, model, workload):
-        if model is not None:
-            volumes = model.spec.volumes
-            volume_mounts = model.spec.volume_mounts
-        else:
+        if model is None:
             volumes = []
             volume_mounts = []
+        elif isinstance(model, StackSpec):
+            # StackSpec doesn't need volumes
+            volumes = []
+            volume_mounts = []
+        else:
+            volumes = model.spec.volumes
+            volume_mounts = model.spec.volume_mounts
 
         if workload.pvc_name is None:
             volumes.append(
@@ -336,7 +350,7 @@ class Cluster:
 
     def evaluate(
         self,
-        model: DeployedModel,
+        model: Union[DeployedModel, StackSpec],
         workload: GeneratedWorkload,
         num_users: int = 1,
         duration: str = "10s",
@@ -354,11 +368,20 @@ class Cluster:
         # get volumes
         volumes, volume_mounts = self.__get_volumes_workload(None, workload.spec)
 
+        if isinstance(model, DeployedModel):
+            model_name = model.spec.name
+            model_url = model.url
+        elif isinstance(model, StackSpec):
+            model_name = workload.spec.model_name if hasattr(workload.spec, 'model_name') else model.get_available_models()[0]
+            model_url = model.get_service_url()
+        else:
+            raise TypeError("model must be either DeployedModel or StackSpec")
+
         env = [
-            {"name": "MODEL_ID", "value": model.spec.name},
+            {"name": "MODEL_ID", "value": model_name},
             {
                 "name": "URL",
-                "value": model.url,
+                "value": model_url,
             },
             {
                 "name": "REQUESTS_FILENAME",
@@ -374,10 +397,8 @@ class Cluster:
             {"name": "BACKOFF", "value": backoff},
             {"name": "GRACE_PERIOD", "value": grace_period},
             {"name": "NAMESPACE", "value": self.namespace},
-            {
-                "name": "NUM_PROM_STEPS",
-                "value": str(num_prom_steps),
-            },
+            {"name": "WORKLOAD_DIR", "value": "/requests"},
+            {"name": "NUM_PROM_STEPS", "value": str(num_prom_steps)},
         ]
 
         if prom_url is not None:
