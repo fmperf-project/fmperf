@@ -1,6 +1,6 @@
 # GuideLLM Workload Specification Example
 # This specification is used for running benchmarks with the GuideLLM container
-model_name: "meta-llama/Llama-3.1-8B-Instruct"  # Model identifier
+model_name: "mistralai/Mistral-7B-Instruct-v0.2"  # Model identifier
 rate_type: "sweep"  # Type of rate testing (sweep, constant, etc.)
 prompt_tokens: 256  # Number of tokens in the input prompt
 output_tokens: 128  # Number of tokens in the output
