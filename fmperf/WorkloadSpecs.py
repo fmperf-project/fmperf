@@ -2,6 +2,7 @@ import yaml
 import os
 from typing import Union
 from fmperf.Cluster import DeployedModel
+from fmperf.StackSpec import StackSpec
 
 
 class WorkloadSpec:
@@ -210,3 +211,79 @@ class RealisticWorkloadSpec(WorkloadSpec):
 
     def get_args(self):
         return ["python -m fmperf.loadgen.generate-input --from-model"]
+
+
+class GuideLLMWorkloadSpec(WorkloadSpec):
+    def __init__(
+        self,
+        model_name: str,
+        rate_type: str = "sweep",
+        prompt_tokens: int = 256,
+        output_tokens: int = 128,
+        max_requests: int = 100,
+        max_seconds: int = 100,
+        output_format: str = "json",
+        image: str = "quay.io/chenw615/guidellm-benchmark:latest",
+        pvc_name: str = None,
+        overwrite: bool = False,
+        hf_token: str = None,
+    ):
+        self.model_name = model_name
+        self.rate_type = rate_type
+        self.prompt_tokens = prompt_tokens
+        self.output_tokens = output_tokens
+        self.max_requests = max_requests
+        self.max_seconds = max_seconds
+        self.output_format = output_format
+        self.hf_token = hf_token
+        super().__init__(1, image, pvc_name, overwrite)
+
+    @classmethod
+    def from_yaml(cls, file: str):
+        return super().from_yaml(file)
+
+    def get_args(self):
+        return []
+
+    def get_env(
+        self,
+        target: str,
+        model: Union["DeployedModel", "StackSpec"],
+        outfile: str,
+    ):
+        # Get the model URL based on the model type
+        if isinstance(model, DeployedModel):
+            model_url = model.url
+        else:
+            model_url = model.get_service_url()
+            
+        # Ensure model_url has http:// prefix
+        if not model_url.startswith(('http://', 'https://')):
+            model_url = f"http://{model_url}"
+
+        env = [
+            {"name": "TARGET", "value": model_url},
+            {"name": "MODEL", "value": self.model_name},
+            {"name": "RATE_TYPE", "value": self.rate_type},
+            {"name": "DATA", "value": f"prompt_tokens={self.prompt_tokens},output_tokens={self.output_tokens}"},
+            {"name": "MAX_REQUESTS", "value": str(self.max_requests)},
+            {"name": "MAX_SECONDS", "value": str(self.max_seconds)},
+            {"name": "OUTPUT_FORMAT", "value": self.output_format},
+        ]
+        
+        # Add Hugging Face token if available
+        print("Checking for HF_TOKEN...")
+        print(f"self.hf_token: {self.hf_token}")
+        print(f"HF_TOKEN env: {os.environ.get('HF_TOKEN')}")
+        print(f"HUGGINGFACE_TOKEN env: {os.environ.get('HUGGINGFACE_TOKEN')}")
+        print(f"hf_token env: {os.environ.get('hf_token')}")
+        print(f"huggingface_token env: {os.environ.get('huggingface_token')}")
+        
+        hf_token = self.hf_token or os.environ.get("HF_TOKEN") or os.environ.get("HUGGINGFACE_TOKEN") or os.environ.get("hf_token") or os.environ.get("huggingface_token")
+        if hf_token:
+            print(f"Found HF_TOKEN: {hf_token}")
+            env.append({"name": "HF_TOKEN", "value": hf_token})
+        else:
+            print("No HF_TOKEN found!")
+            
+        return env

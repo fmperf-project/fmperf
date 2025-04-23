@@ -1,0 +1,123 @@
+Running command: guidellm benchmark --target "http://vllm-router-service:80" --model "meta-llama/Llama-3.1-8B-Instruct" --rate-type "sweep" --data "prompt_tokens=256,output_tokens=128" --max-requests 100 --max-seconds 100 --output-path "/requests/guidellm-evaluate.json"
+Creating backend...
+Backend openai_http connected to http://vllm-router-service:80 for model        
+meta-llama/Llama-3.1-8B-Instruct.                                               
+Creating request loader...
+Created loader with 1000 unique requests from                                   
+prompt_tokens=256,output_tokens=128.                                            
+                                                                                
+                                                                                
+╭─ Benchmarks ─────────────────────────────────────────────────────────────────╮
+│ [0… synch… (… Req:    0.5 req/s,    1.85s Lat,     1.0 Conc,      53 Comp, … │
+│               Tok:   69.1 gen/s,  346.2 tot/s,  36.6ms TTFT,   14.3ms ITL, … │
+│ [0… throu… (… Req:   22.5 req/s,    4.37s Lat,    98.2 Conc,     100 Comp, … │
+│               Tok: 2875.8 gen/s, 14404.9 tot/s, 300.4ms TTFT,   31.9ms ITL,… │
+│ [0… const… (… Req:    3.2 req/s,    2.14s Lat,     6.8 Conc,     100 Comp, … │
+│               Tok:  406.3 gen/s, 2034.8 tot/s,  45.0ms TTFT,   16.5ms ITL, … │
+│ [0… const… (… Req:    5.7 req/s,    2.48s Lat,    14.1 Conc,     100 Comp, … │
+│               Tok:  726.2 gen/s, 3637.7 tot/s,  42.7ms TTFT,   19.2ms ITL, … │
+│ [0… const… (… Req:    7.9 req/s,    3.03s Lat,    23.9 Conc,     100 Comp, … │
+│               Tok: 1009.4 gen/s, 5056.3 tot/s,  47.7ms TTFT,   23.5ms ITL, … │
+│ [0… const… (… Req:    9.8 req/s,    3.68s Lat,    36.3 Conc,     100 Comp, … │
+│               Tok: 1260.3 gen/s, 6312.3 tot/s,  56.5ms TTFT,   28.6ms ITL, … │
+│ [0… const… (… Req:   11.4 req/s,    4.24s Lat,    48.3 Conc,     100 Comp, … │
+│               Tok: 1458.4 gen/s, 7305.2 tot/s,  63.0ms TTFT,   32.9ms ITL, … │
+│ [0… const… (… Req:   12.4 req/s,    4.86s Lat,    60.0 Conc,     100 Comp, … │
+│               Tok: 1581.6 gen/s, 7922.5 tot/s, 153.2ms TTFT,   37.0ms ITL, … │
+│ [0… const… (… Req:   11.9 req/s,    5.09s Lat,    60.6 Conc,     100 Comp, … │
+│               Tok: 1523.0 gen/s, 7629.4 tot/s, 239.7ms TTFT,   38.2ms ITL, … │
+│ [0… const… (… Req:   14.0 req/s,    5.36s Lat,    75.1 Conc,     100 Comp, … │
+│               Tok: 1793.9 gen/s, 8985.2 tot/s, 452.3ms TTFT,   38.6ms ITL, … │
+╰──────────────────────────────────────────────────────────────────────────────╯
+Generating... ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ (10/10) [ 0:03:33 < 0:00:00 ]                    
+                    
+Benchmarks Metadata:
+    Run id:80610f12-9acb-46d1-9ecd-7d1c835101e5
+    Duration:213.3 seconds
+    Profile:type=sweep, strategies=['synchronous', 'throughput', 'constant',    
+    'constant', 'constant', 'constant', 'constant', 'constant', 'constant',     
+    'constant'], max_concurrency=None                                           
+    Args:max_number=100, max_duration=100.0, warmup_number=None,                
+    warmup_duration=None, cooldown_number=None, cooldown_duration=None          
+    Worker:type_='generative_requests_worker' backend_type='openai_http'        
+    backend_target='http://vllm-router-service:80'                              
+    backend_model='meta-llama/Llama-3.1-8B-Instruct'                            
+    backend_info={'max_output_tokens': 16384, 'timeout': 300, 'http2': True,    
+    'authorization': False, 'organization': None, 'project': None,              
+    'text_completions_path': '/v1/completions', 'chat_completions_path':        
+    '/v1/chat/completions'}                                                     
+    Request Loader:type_='generative_request_loader'                            
+    data='prompt_tokens=256,output_tokens=128' data_args=None                   
+    processor='meta-llama/Llama-3.1-8B-Instruct' processor_args=None            
+    Extras:None
+                
+                
+Benchmarks Info:
+================================================================================
+===================================================================             
+Metadata                                       |||| Requests Made  ||| Prompt   
+Tok/Req ||| Output Tok/Req ||| Prompt Tok Total||| Output Tok Total||           
+     Benchmark| Start Time| End Time| Duration (s)|  Comp|  Inc|  Err|  Comp|   
+Inc| Err|  Comp|   Inc| Err|   Comp|  Inc|  Err|   Comp|  Inc|  Err             
+--------------|-----------|---------|-------------|------|-----|-----|------|---
+---|----|------|------|----|-------|-----|-----|-------|-----|-----             
+   synchronous|   04:01:41| 04:03:21|        100.0|    53|    1|    0| 257.1|   
+256.0| 0.0| 128.0| 127.0| 0.0|  13627|  256|    0|   6784|  127|    0           
+    throughput|   04:03:22| 04:03:26|          4.5|   100|    0|    0| 257.1|   
+0.0| 0.0| 128.0|   0.0| 0.0|  25706|    0|    0|  12800|    0|    0             
+ constant@3.28|   04:03:27| 04:03:58|         31.5|   100|    0|    0| 257.0|   
+0.0| 0.0| 128.0|   0.0| 0.0|  25703|    0|    0|  12800|    0|    0             
+ constant@6.02|   04:03:59| 04:04:16|         17.6|   100|    0|    0| 257.1|   
+0.0| 0.0| 128.0|   0.0| 0.0|  25707|    0|    0|  12800|    0|    0             
+ constant@8.76|   04:04:17| 04:04:29|         12.7|   100|    0|    0| 257.1|   
+0.0| 0.0| 128.0|   0.0| 0.0|  25706|    0|    0|  12800|    0|    0             
+constant@11.50|   04:04:30| 04:04:40|         10.2|   100|    0|    0| 257.0|   
+0.0| 0.0| 128.0|   0.0| 0.0|  25704|    0|    0|  12800|    0|    0             
+constant@14.25|   04:04:40| 04:04:49|          8.8|   100|    0|    0| 257.1|   
+0.0| 0.0| 128.0|   0.0| 0.0|  25705|    0|    0|  12800|    0|    0             
+constant@16.99|   04:04:50| 04:04:58|          8.1|   100|    0|    0| 257.1|   
+0.0| 0.0| 128.0|   0.0| 0.0|  25706|    0|    0|  12800|    0|    0             
+constant@19.73|   04:04:58| 04:05:07|          8.4|   100|    0|    0| 257.1|   
+0.0| 0.0| 128.0|   0.0| 0.0|  25708|    0|    0|  12800|    0|    0             
+constant@22.47|   04:05:07| 04:05:14|          7.1|   100|    0|    0| 257.0|   
+0.0| 0.0| 128.0|   0.0| 0.0|  25704|    0|    0|  12800|    0|    0             
+================================================================================
+===================================================================             
+                 
+                 
+Benchmarks Stats:
+================================================================================
+====================================================================            
+Metadata      | Request Stats         || Out Tok/sec| Tot Tok/sec| Req Latency  
+(ms)||| TTFT (ms)          ||| ITL (ms)        ||| TPOT (ms)       ||           
+     Benchmark| Per Second| Concurrency|        mean|        mean| mean| median|
+p99|  mean| median|    p99| mean| median|  p99| mean| median|  p99              
+--------------|-----------|------------|------------|------------|-----|-------|
+-----|------|-------|-------|-----|-------|-----|-----|-------|-----            
+   synchronous|       0.54|        1.00|        69.1|       346.2| 1.85|   1.85|
+1.86|  36.6|   36.8|   37.7| 14.3|   14.3| 14.4| 14.2|   14.2| 14.2             
+    throughput|      22.47|       98.20|      2875.8|     14404.9| 4.37|   4.37|
+4.44| 300.4|  341.5|  388.4| 31.9|   31.3| 33.4| 31.6|   31.0| 33.2             
+ constant@3.28|       3.17|        6.79|       406.3|      2034.8| 2.14|   2.14|
+2.30|  45.0|   41.7|  170.9| 16.5|   16.5| 16.8| 16.4|   16.4| 16.7             
+ constant@6.02|       5.67|       14.05|       726.2|      3637.7| 2.48|   2.50|
+2.58|  42.7|   42.3|   71.9| 19.2|   19.3| 19.9| 19.0|   19.2| 19.8             
+ constant@8.76|       7.89|       23.90|      1009.4|      5056.3| 3.03|   3.17|
+3.19|  47.7|   46.3|   77.4| 23.5|   24.6| 24.8| 23.3|   24.4| 24.6             
+constant@11.50|       9.85|       36.28|      1260.3|      6312.3| 3.68|   3.76|
+4.24|  56.5|   52.1|  106.8| 28.6|   29.2| 32.9| 28.3|   28.9| 32.6             
+constant@14.25|      11.39|       48.32|      1458.4|      7305.2| 4.24|   4.53|
+4.94|  63.0|   53.7|  143.5| 32.9|   34.7| 38.6| 32.6|   34.4| 38.2             
+constant@16.99|      12.36|       60.02|      1581.6|      7922.5| 4.86|   4.99|
+6.08| 153.2|   63.7|  670.1| 37.0|   38.8| 43.7| 36.7|   38.5| 43.4             
+constant@19.73|      11.90|       60.62|      1523.0|      7629.4| 5.09|   5.09|
+6.43| 239.7|   73.8| 1150.5| 38.2|   39.6| 46.2| 37.9|   39.3| 45.9             
+constant@22.47|      14.02|       75.13|      1793.9|      8985.2| 5.36|   5.47|
+6.71| 452.3|  267.5| 1768.9| 38.6|   38.8| 45.2| 38.3|   38.5| 44.8             
+================================================================================
+====================================================================            
+                           
+Saving benchmarks report...
+Benchmarks report saved to /requests/guidellm-evaluate.json
+                      
+Benchmarking complete.

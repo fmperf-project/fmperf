@@ -1,0 +1,10 @@
+# GuideLLM Workload Specification Example
+# This specification is used for running benchmarks with the GuideLLM container
+model_name: "meta-llama/Llama-3.1-8B-Instruct"  # Model identifier
+rate_type: "sweep"  # Type of rate testing (sweep, constant, etc.)
+prompt_tokens: 256  # Number of tokens in the input prompt
+output_tokens: 128  # Number of tokens in the output
+max_requests: 100  # Maximum number of requests to send
+max_seconds: 100  # Maximum duration in seconds
+output_format: "json"  # Output format for results
+image: "quay.io/chenw615/guidellm-benchmark:latest"  # Container image to use 

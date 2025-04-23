@@ -2,6 +2,8 @@ import hashlib
 import json
 import typing
 from typing import Union
+import os
+from datetime import datetime
 
 import pandas as pd
 from kubernetes import client
@@ -10,7 +12,12 @@ from fmperf.ModelSpecs import ModelSpec, TGISModelSpec, vLLMModelSpec
 from fmperf.StackSpec import StackSpec
 from fmperf.DeployedModel import DeployedModel
 from fmperf.utils import Creating, Deleting, Waiting, make_logger
-from fmperf.WorkloadSpecs import WorkloadSpec
+from fmperf.WorkloadSpecs import WorkloadSpec, GuideLLMWorkloadSpec
+
+
+def generate_timestamp_id() -> str:
+    """Generate an ID in the format YYYYMMDD-HHMM."""
+    return datetime.now().strftime("%Y%m%d-%H%M")
 
 
 class GeneratedWorkload:
@@ -230,6 +237,11 @@ class Cluster:
             model_url = model.get_service_url()
         else:
             raise TypeError("model must be either DeployedModel or StackSpec")
+        
+        """Generate workload for a model deployment."""
+        if isinstance(workload, GuideLLMWorkloadSpec):
+            # For GuideLLMWorkloadSpec, just return the workload directly
+            return GeneratedWorkload(spec=workload, file="", target=target)
 
         if filename is not None:
             outfile = filename
@@ -364,6 +376,7 @@ class Cluster:
     ):
         # type of service: vllm/tgis
         target = workload.target
+        id = generate_timestamp_id() if id == "" else id
 
         # get volumes
         volumes, volume_mounts = self.__get_volumes_workload(None, workload.spec)
@@ -377,44 +390,63 @@ class Cluster:
         else:
             raise TypeError("model must be either DeployedModel or StackSpec")
 
-        env = [
-            {"name": "MODEL_ID", "value": model_name},
-            {
-                "name": "URL",
-                "value": model_url,
-            },
-            {
-                "name": "REQUESTS_FILENAME",
-                "value": workload.file,
-            },
-            {
-                "name": "RESULTS_FILENAME",
-                "value": "results.json",
-            },
-            {"name": "TARGET", "value": target},
-            {"name": "NUM_USERS", "value": str(num_users)},
-            {"name": "DURATION", "value": duration},
-            {"name": "BACKOFF", "value": backoff},
-            {"name": "GRACE_PERIOD", "value": grace_period},
-            {"name": "NAMESPACE", "value": self.namespace},
-            {"name": "WORKLOAD_DIR", "value": "/requests"},
-            {"name": "NUM_PROM_STEPS", "value": str(num_prom_steps)},
-        ]
+        if isinstance(workload.spec, GuideLLMWorkloadSpec):
+            # Use the environment variables from GuideLLMWorkloadSpec
+            env = workload.spec.get_env(target, model, workload.file)
+            job_name = f"guidellm-evaluate{'-'+id if id else ''}"
+            # Add OUTPUT_PATH based on the volume mount and job name
+            env.append({"name": "OUTPUT_PATH", "value": f"/requests/{job_name}"})
+            
+            # Add HF_TOKEN from host environment if available
+            hf_token = os.environ.get("HF_TOKEN") or os.environ.get("HUGGINGFACE_TOKEN") or os.environ.get("hf_token") or os.environ.get("huggingface_token")
+            if hf_token:
+                env.append({"name": "HF_TOKEN", "value": hf_token})
+                
+            container_name = "guidellm-benchmark"
+            container_args = []  # Use default entrypoint
+        else:
+            env = [
+                {"name": "MODEL_ID", "value": model_name},
+                {
+                    "name": "URL",
+                    "value": model_url,
+                },
+                {
+                    "name": "REQUESTS_FILENAME",
+                    "value": workload.file,
+                },
+                {
+                    "name": "RESULTS_FILENAME",
+                    "value": "results.json",
+                },
+                {"name": "TARGET", "value": target},
+                {"name": "NUM_USERS", "value": str(num_users)},
+                {"name": "DURATION", "value": duration},
+                {"name": "BACKOFF", "value": backoff},
+                {"name": "GRACE_PERIOD", "value": grace_period},
+                {"name": "NAMESPACE", "value": self.namespace},
+                {"name": "WORKLOAD_DIR", "value": "/requests"},
+                {"name": "NUM_PROM_STEPS", "value": str(num_prom_steps)},
+            ]
 
-        if prom_url is not None:
-            env.append({"name": "PROM_URL", "value": prom_url})
+            if prom_url is not None:
+                env.append({"name": "PROM_URL", "value": prom_url})
 
-        if prom_token is not None:
-            env.append({"name": "PROM_TOKEN", "value": prom_token})
+            if prom_token is not None:
+                env.append({"name": "PROM_TOKEN", "value": prom_token})
 
-        if metric_list is not None:
-            env.append({"name": "TARGET_METRICS_LIST", "value": metric_list})
+            if metric_list is not None:
+                env.append({"name": "TARGET_METRICS_LIST", "value": metric_list})
+
+            job_name = f"fmperf-evaluate{'-'+id if id else ''}"
+            container_name = "fmaas-perf"
+            container_args = ["python -m fmperf.loadgen.run; cat /requests/results.json"]
 
         manifest = {
             "apiVersion": "batch/v1",
             "kind": "Job",
             "metadata": {
-                "name": f"fmperf-evaluate{'-'+id if id else ''}",
+                "name": job_name,
                 "namespace": self.namespace,
             },
             "spec": {
@@ -422,14 +454,12 @@ class Cluster:
                     "spec": {
                         "containers": [
                             {
-                                "name": "fmaas-perf",
+                                "name": container_name,
                                 "imagePullPolicy": "Always",
                                 "image": workload.spec.image,
                                 "env": env,
-                                "command": ["/bin/bash", "-ce"],
-                                "args": [
-                                    "python -m fmperf.loadgen.run; cat /requests/results.json"
-                                ],
+                                "command": ["/bin/bash", "-ce"] if container_args else None,
+                                "args": container_args,
                                 "volumeMounts": volume_mounts,
                                 "securityContext": self.security_context,
                             }
@@ -449,12 +479,10 @@ class Cluster:
         waiting = Waiting(self.apigetter, self.logger)
         deleting = Deleting(self.apigetter, self.logger)
 
-        waiting.wait_for_namespaced_job(
-            f"fmperf-evaluate{'-'+id if id else ''}", self.namespace
-        )
+        waiting.wait_for_namespaced_job(job_name, self.namespace)
 
         job_def = client.BatchV1Api(self.apiclient).read_namespaced_job(
-            name=f"fmperf-evaluate{'-'+id if id else ''}", namespace=self.namespace
+            name=job_name, namespace=self.namespace
         )
         controllerUid = job_def.metadata.labels["controller-uid"]
 
@@ -483,8 +511,6 @@ class Cluster:
             print(e)
             perf_out, energy_out = None, None
 
-        deleting.delete_namespaced_job(
-            f"fmperf-evaluate{'-'+id if id else ''}", self.namespace
-        )
+        deleting.delete_namespaced_job(job_name, self.namespace)
 
         return perf_out, energy_out
