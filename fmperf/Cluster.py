@@ -15,11 +15,6 @@ from fmperf.utils import Creating, Deleting, Waiting, make_logger
 from fmperf.WorkloadSpecs import WorkloadSpec, GuideLLMWorkloadSpec
 
 
-def generate_timestamp_id() -> str:
-    """Generate an ID in the format YYYYMMDD-HHMM."""
-    return datetime.now().strftime("%Y%m%d-%H%M")
-
-
 class GeneratedWorkload:
     def __init__(self, spec: WorkloadSpec, file: str, target: str):
         self.spec = spec
@@ -43,6 +38,10 @@ class Cluster:
             "runAsUser": 0,
             "seccompProfile": {"type": "RuntimeDefault"},
         }
+
+    def generate_timestamp_id(self) -> str:
+        """Generate an ID in the format YYYYMMDD-HHMM."""
+        return datetime.now().strftime("%Y%m%d-%H%M")
 
     def apigetter(self):
         return self.apiclient
@@ -376,7 +375,6 @@ class Cluster:
     ):
         # type of service: vllm/tgis
         target = workload.target
-        id = generate_timestamp_id() if id == "" else id
 
         # get volumes
         volumes, volume_mounts = self.__get_volumes_workload(None, workload.spec)
@@ -417,7 +415,7 @@ class Cluster:
                 },
                 {
                     "name": "RESULTS_FILENAME",
-                    "value": "results.json",
+                    "value": f"fmperf-results-{id}.json",
                 },
                 {"name": "TARGET", "value": target},
                 {"name": "NUM_USERS", "value": str(num_users)},
@@ -440,7 +438,7 @@ class Cluster:
 
             job_name = f"fmperf-evaluate{'-'+id if id else ''}"
             container_name = "fmaas-perf"
-            container_args = ["python -m fmperf.loadgen.run; cat /requests/results.json"]
+            container_args = [f"python -m fmperf.loadgen.run; cat /requests/fmperf-results-{id}.json"]
 
         manifest = {
             "apiVersion": "batch/v1",

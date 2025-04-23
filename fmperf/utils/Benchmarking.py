@@ -39,7 +39,7 @@ def _run_benchmark_iteration(cluster, model, workload, workload_spec, number_use
     
     if len(results) > 0:
         df = parse_results(results, print_df=True)
-        df.to_csv(f"result{rep}.csv")
+        df.to_csv(f"fmperf-{id}-result{rep}.csv")
 
 
 # Run benchmark for models or stack deployment
@@ -69,6 +69,8 @@ def run_benchmark(
         raise ValueError("Cannot specify both model_spec and stack_spec. Choose one.")
     if model_spec is None and stack_spec is None:
         raise ValueError("Must specify either model_spec or stack_spec.")
+
+    id = cluster.generate_timestamp_id() if id == "" else id
 
     # Convert number_users to list if it's a single value
     if not isinstance(number_users, list):
