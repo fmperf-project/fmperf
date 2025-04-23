@@ -15,7 +15,7 @@ from fmperf import Cluster
 from fmperf import GuideLLMWorkloadSpec
 from fmperf.StackSpec import StackSpec
 from fmperf.utils import run_benchmark
-from fmperf.utils.storage import create_local_storage, create_cos_storage
+from fmperf.utils.storage import create_local_storage, create_vpc_block_storage
 
 
 # Initialize Kubernetes Configuration
@@ -43,10 +43,10 @@ def initialize_kubernetes(location):
             name="llm", apiclient=apiclient, namespace=os.environ.get("OPENSHIFT_NAMESPACE")
         )
         
-        # Create PVC using COS storage for remote deployment
-        workload_pvc_name = create_cos_storage(
+        # Create PVC using VPC Block Storage for remote deployment
+        workload_pvc_name = create_vpc_block_storage(
             apiclient=apiclient,
-            namespace=os.environ["OPENSHIFT_NAMESPACE"]
+            namespace=os.environ.get("OPENSHIFT_NAMESPACE")
         )
     else:
         raise ValueError("Valid choices for model_mode are local and remote")
@@ -73,7 +73,7 @@ if __name__ == "__main__":
         name="vllm-prod-stack",
         stack_type="vllm-prod",  # This will automatically set endpoint to vllm-router-service
         refresh_interval=300,  # Refresh model list every 5 minutes
-        endpoint="vllm-router-service.vllm-prod.svc.cluster.local"  # Fully qualified service name
+        endpoint_url="vllm-router-service.vllm-prod.svc.cluster.local"  # Fully qualified service name
     )
 
     # USER Entry: Experiment variables

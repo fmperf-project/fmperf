@@ -178,6 +178,54 @@ def create_cos_storage(
     
     return pvc_name
 
+def create_vpc_block_storage(
+    apiclient: client.ApiClient,
+    namespace: str,
+    pvc_name: str = "workload-pvc",
+    storage_size: str = "10Gi",
+    storage_class: str = "ibmc-vpc-block-10iops-tier"
+) -> str:
+    """
+    Create a PersistentVolumeClaim using VPC Block Storage for remote deployments.
+    
+    Args:
+        apiclient: Kubernetes API client
+        namespace: Namespace for the PVC
+        pvc_name: Name of the PersistentVolumeClaim
+        storage_size: Size of the storage
+        storage_class: Storage class to use (default: ibmc-vpc-block-10iops-tier)
+        
+    Returns:
+        Name of the created PVC
+    """
+    pvc = client.V1PersistentVolumeClaim(
+        metadata=client.V1ObjectMeta(
+            name=pvc_name,
+            namespace=namespace
+        ),
+        spec=client.V1PersistentVolumeClaimSpec(
+            access_modes=["ReadWriteOnce"],  # VPC Block Storage only supports ReadWriteOnce
+            resources=client.V1ResourceRequirements(
+                requests={"storage": storage_size}
+            ),
+            storage_class_name=storage_class
+        )
+    )
+    
+    try:
+        v1 = client.CoreV1Api(apiclient)
+        v1.create_namespaced_persistent_volume_claim(
+            namespace=namespace,
+            body=pvc
+        )
+    except client.exceptions.ApiException as e:
+        if e.status == 409:  # PVC already exists
+            pass
+        else:
+            raise e
+    
+    return pvc_name
+
 def copy_from_pvc(
     namespace: str,
     pvc_name: str,

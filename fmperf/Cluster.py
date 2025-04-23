@@ -395,6 +395,13 @@ class Cluster:
             # Add OUTPUT_PATH based on the volume mount and job name
             env.append({"name": "OUTPUT_PATH", "value": f"/requests/{job_name}"})
             
+            # Add Hugging Face cache environment variables
+            env.extend([
+                {"name": "TRANSFORMERS_CACHE", "value": "/requests/hf_cache"},
+                {"name": "HF_HOME", "value": "/requests/hf_cache"},
+                {"name": "HF_DATASETS_CACHE", "value": "/requests/hf_cache/datasets"}
+            ])
+            
             # Add HF_TOKEN from host environment if available
             hf_token = os.environ.get("HF_TOKEN") or os.environ.get("HUGGINGFACE_TOKEN") or os.environ.get("hf_token") or os.environ.get("huggingface_token")
             if hf_token:
@@ -450,6 +457,20 @@ class Cluster:
             "spec": {
                 "template": {
                     "spec": {
+                        "serviceAccountName": workload.spec.service_account or "vllm-router-service-account",
+                        "initContainers": [
+                            {
+                                "name": "init-cache-dirs",
+                                "image": "busybox",
+                                "command": ["sh", "-c", "mkdir -p /requests/hf_cache/datasets"],
+                                "volumeMounts": [
+                                    {
+                                        "name": "requests",
+                                        "mountPath": "/requests"
+                                    }
+                                ]
+                            }
+                        ],
                         "containers": [
                             {
                                 "name": container_name,
@@ -459,11 +480,16 @@ class Cluster:
                                 "command": ["/bin/bash", "-ce"] if container_args else None,
                                 "args": container_args,
                                 "volumeMounts": volume_mounts,
-                                "securityContext": self.security_context,
+                                "securityContext": {
+                                    "allowPrivilegeEscalation": False,
+                                    "capabilities": {
+                                        "drop": ["ALL"]
+                                    }
+                                }
                             }
                         ],
                         "restartPolicy": "Never",
-                        "volumes": volumes,
+                        "volumes": volumes
                     }
                 },
                 "backoffLimit": 0,

@@ -227,6 +227,7 @@ class GuideLLMWorkloadSpec(WorkloadSpec):
         pvc_name: str = None,
         overwrite: bool = False,
         hf_token: str = None,
+        service_account: str = None,
     ):
         self.model_name = model_name
         self.rate_type = rate_type
@@ -236,6 +237,7 @@ class GuideLLMWorkloadSpec(WorkloadSpec):
         self.max_seconds = max_seconds
         self.output_format = output_format
         self.hf_token = hf_token
+        self.service_account = service_account
         super().__init__(1, image, pvc_name, overwrite)
 
     @classmethod
