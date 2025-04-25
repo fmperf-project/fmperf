@@ -10,7 +10,7 @@ class StackSpec:
     def __init__(
         self,
         name: str,
-        stack_type: str,  # "aibrix", "dynamo", "vllm-prod", "custom"
+        stack_type: str,  # "aibrix", "dynamo", "vllm-prod", "vllm-d", "custom"
         endpoint_url: str = None,
         api_key: str = None,
         api_version: str = None,
@@ -57,6 +57,13 @@ class StackSpec:
                 self.endpoint_url = "vllm-router-service:80"
             if not self.health_check_path:
                 self.health_check_path = "/health"
+        
+        elif self.stack_type == "vllm-d":
+            if not self.endpoint_url:
+                # Use the in-cluster service name and port
+                self.endpoint_url = "inference-gateway"
+            if not self.health_check_path:
+                self.health_check_path = "/health"
 
     def get_service_url(self) -> str:
         """Get the service endpoint URL"""
@@ -65,21 +72,21 @@ class StackSpec:
     def get_chat_completion_url(self) -> str:
         """Get the chat completion endpoint"""
         base = self.get_service_url()
-        if self.stack_type in ["aibrix", "vllm-prod", "dynamo"]:
+        if self.stack_type in ["aibrix", "vllm-prod", "dynamo", "vllm-d"]:
             return f"{base}/v1/chat/completions"
         return f"{base}/chat/completions"  # default path
 
     def get_completion_url(self) -> str:
         """Get the completion endpoint"""
         base = self.get_service_url()
-        if self.stack_type in ["aibrix", "vllm-prod", "dynamo"]:
+        if self.stack_type in ["aibrix", "vllm-prod", "dynamo", "vllm-d"]:
             return f"{base}/v1/completions"
         return f"{base}/completions"  # default path
 
     def get_models_url(self) -> str:
         """Get the models list endpoint"""
         base = self.get_service_url()
-        if self.stack_type in ["aibrix", "vllm-prod", "dynamo"]:
+        if self.stack_type in ["aibrix", "vllm-prod", "dynamo", "vllm-d"]:
             return f"{base}/v1/models"
         return f"{base}/models"  # default path
 
