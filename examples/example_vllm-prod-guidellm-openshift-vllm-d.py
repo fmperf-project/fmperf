@@ -70,14 +70,11 @@ if __name__ == "__main__":
 
     # Create stack spec for the existing vllm-prod deployment
     stack_spec = StackSpec(
-        # name="vllm-prod-stack",
-        # stack_type="vllm-prod",  # This will automatically set endpoint to vllm-router-service
-        # refresh_interval=300,  # Refresh model list every 5 minutes
-        # endpoint_url="vllm-router-service.vllm-prod.svc.cluster.local"  # Fully qualified service name
         name="e2e-solution-stack",
         stack_type="vllm-d",  # This will automatically set endpoint to vllm-router-service
         refresh_interval=300,  # Refresh model list every 5 minutes
-        endpoint_url="inference-gateway.e2e-solution.scv.cluster.local"  # Fully qualified service name
+        # endpoint_url="inference-gateway.e2e-solution.svc.cluster.local"  # Fully qualified service name
+        endpoint_url="inference-gateway"  # Fully qualified service name
     )
 
     # USER Entry: Experiment variables
