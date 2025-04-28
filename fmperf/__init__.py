@@ -6,4 +6,5 @@ from fmperf.WorkloadSpecs import (
     HomogeneousWorkloadSpec,
     RealisticWorkloadSpec,
     GuideLLMWorkloadSpec,
+    LMBenchmarkWorkload,
 )

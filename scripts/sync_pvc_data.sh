@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Default values
-NAMESPACE="vllm-prod"
+NAMESPACE="e2e-solution"
 PVC_NAME="workload-pvc"
 LOCAL_DIR="./results"
 POD_NAME="rsync-pod"

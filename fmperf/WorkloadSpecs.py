@@ -1,5 +1,6 @@
 import yaml
 import os
+import json
 from typing import Union
 from fmperf.Cluster import DeployedModel
 from fmperf.StackSpec import StackSpec
@@ -289,3 +290,68 @@ class GuideLLMWorkloadSpec(WorkloadSpec):
             print("No HF_TOKEN found!")
             
         return env
+
+class LMBenchmarkWorkload(WorkloadSpec):
+    def __init__(
+        self,
+        model_name: str,
+        base_url: str = "http://localhost:8000",
+        scenarios: str = "sharegpt",
+        qps_values: str = "0.5 0.67 0.84 1 1.17 1.34",  # Default QPS values as space-separated string
+        image: str = "lmcache/lmcache-benchmark:latest",
+        pvc_name: str = None,
+        overwrite: bool = False,
+        service_account: str = None,
+        chat_template: str = None,
+    ):
+        self.model_name = model_name
+        self.base_url = base_url
+        self.scenarios = scenarios
+        self.qps_values = qps_values
+        self.service_account = service_account
+        self.chat_template = chat_template
+        super().__init__(1, image, pvc_name, overwrite)
+
+    @classmethod
+    def from_yaml(cls, file: str):
+        return super().from_yaml(file)
+
+    def get_args(self):
+        return []
+
+    def get_env(
+        self,
+        target: str,
+        model: Union["DeployedModel", "StackSpec"],
+        outfile: str,
+    ):
+        # Get the model URL based on the model type
+        if isinstance(model, DeployedModel):
+            model_url = model.url
+        else:
+            model_url = model.get_service_url()
+            
+        # Ensure model_url has http:// prefix
+        if not model_url.startswith(('http://', 'https://')):
+            model_url = f"http://{model_url}"
+
+        env = [
+            {"name": "MODEL", "value": self.model_name},
+            {"name": "BASE_URL", "value": model_url},
+            {"name": "SAVE_FILE_KEY", "value": "/requests/lmbenchmark-"},
+            {"name": "SCENARIOS", "value": self.scenarios},
+            {"name": "QPS_VALUES", "value": self.qps_values},  # Pass QPS values as string
+        ]
+        
+        if self.chat_template:
+            # Pass chat template as a JSON string to be parsed by the script
+            env.append({
+                "name": "CHAT_TEMPLATE",
+                "value": json.dumps({
+                    "template": self.chat_template,
+                    "use_template": True
+                })
+            })
+            
+        return env
+

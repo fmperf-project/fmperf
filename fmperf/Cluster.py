@@ -12,7 +12,11 @@ from fmperf.ModelSpecs import ModelSpec, TGISModelSpec, vLLMModelSpec
 from fmperf.StackSpec import StackSpec
 from fmperf.DeployedModel import DeployedModel
 from fmperf.utils import Creating, Deleting, Waiting, make_logger
-from fmperf.WorkloadSpecs import WorkloadSpec, GuideLLMWorkloadSpec
+from fmperf.WorkloadSpecs import (
+    WorkloadSpec,
+    GuideLLMWorkloadSpec,
+    LMBenchmarkWorkload,
+)
 
 
 class GeneratedWorkload:
@@ -241,6 +245,9 @@ class Cluster:
         if isinstance(workload, GuideLLMWorkloadSpec):
             # For GuideLLMWorkloadSpec, just return the workload directly
             return GeneratedWorkload(spec=workload, file="", target=target)
+        elif isinstance(workload, LMBenchmarkWorkload):
+            # For LMBenchmarkWorkload, just return the workload directly
+            return GeneratedWorkload(spec=workload, file="", target=target)
 
         if filename is not None:
             outfile = filename
@@ -409,6 +416,29 @@ class Cluster:
                 
             container_name = "guidellm-benchmark"
             container_args = []  # Use default entrypoint
+        elif isinstance(workload.spec, LMBenchmarkWorkload):
+            # Use the environment variables from LMBenchmarkWorkload
+            env = workload.spec.get_env(target, model, workload.file)
+            job_name = f"lmbenchmark-evaluate{'-'+id if id else ''}"
+            
+            # Add Hugging Face cache environment variables
+            env.extend([
+                {"name": "TRANSFORMERS_CACHE", "value": "/requests/hf_cache"},
+                {"name": "HF_HOME", "value": "/requests/hf_cache"},
+                {"name": "HF_DATASETS_CACHE", "value": "/requests/hf_cache/datasets"}
+            ])
+            
+            # Add HF_TOKEN from host environment if available
+            hf_token = os.environ.get("HF_TOKEN") or os.environ.get("HUGGINGFACE_TOKEN") or os.environ.get("hf_token") or os.environ.get("huggingface_token")
+            if hf_token:
+                env.append({"name": "HF_TOKEN", "value": hf_token})
+                
+            container_name = "lmbenchmark"
+            container_args = [
+                "QPS_VALUES=($(env | grep QPS_VALUES_ | sort -V | cut -d= -f2)); "
+                ". ~/.bashrc && . .venv/bin/activate && "
+                "/app/run_benchmarks.sh \"$MODEL\" \"$BASE_URL\" \"$SAVE_FILE_KEY\" \"$SCENARIOS\" \"${QPS_VALUES[@]}\""
+            ]
         else:
             env = [
                 {"name": "MODEL_ID", "value": model_name},
