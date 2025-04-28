@@ -1,6 +1,6 @@
 # GuideLLM Workload Specification Example
 # This specification is used for running benchmarks with the GuideLLM container
-model_name: "meta-llama/Llama-3.1-8B-Instruct"  # Model identifier
+model_name: "facebook/opt-125m"  # Model identifier
 rate_type: "sweep"  # Type of rate testing (sweep, constant, etc.)
 prompt_tokens: 256  # Number of tokens in the input prompt
 output_tokens: 128  # Number of tokens in the output

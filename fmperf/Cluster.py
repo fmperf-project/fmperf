@@ -462,7 +462,7 @@ class Cluster:
                             {
                                 "name": "init-cache-dirs",
                                 "image": "busybox",
-                                "command": ["sh", "-c", "mkdir -p /requests/hf_cache/datasets"],
+                                "command": ["sh", "-c", "mkdir -p /requests/hf_cache/datasets && chmod -R 777 /requests && ls -la /requests"],
                                 "volumeMounts": [
                                     {
                                         "name": "requests",
