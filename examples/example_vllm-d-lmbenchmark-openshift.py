@@ -73,7 +73,7 @@ if __name__ == "__main__":
         name="e2e-solution-stack",
         stack_type="vllm-d",  # This will automatically set endpoint to vllm-router-service
         refresh_interval=300,  # Refresh model list every 5 minutes
-        endpoint_url="inference-gateway"  # Service name
+        endpoint_url="llama-3-8b"  # Service name
     )
 
     # USER Entry: Experiment variables

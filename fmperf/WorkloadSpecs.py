@@ -338,10 +338,14 @@ class LMBenchmarkWorkload(WorkloadSpec):
         env = [
             {"name": "MODEL", "value": self.model_name},
             {"name": "BASE_URL", "value": model_url},
-            {"name": "SAVE_FILE_KEY", "value": "/requests/lmbenchmark-"},
+            {"name": "SAVE_FILE_KEY", "value": "/requests/lmbenchmark"},
             {"name": "SCENARIOS", "value": self.scenarios},
-            {"name": "QPS_VALUES", "value": self.qps_values},  # Pass QPS values as string
         ]
+        
+        # Split QPS values and add them as individual environment variables
+        qps_values = self.qps_values.split()
+        for i, qps in enumerate(qps_values):
+            env.append({"name": f"QPS_VALUES_{i}", "value": qps})
         
         if self.chat_template:
             # Pass chat template as a JSON string to be parsed by the script

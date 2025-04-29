@@ -1,122 +1,27 @@
-Running command: guidellm benchmark --target "http://inference-gateway" --model "facebook/opt-125m" --rate-type "sweep" --data "prompt_tokens=256,output_tokens=128" --max-requests 100 --max-seconds 100 --output-path "/requests/guidellm-evaluate-20250427-2137.json"
-Creating backend...
-Backend openai_http connected to http://inference-gateway for model             
-facebook/opt-125m.                                                              
-Creating request loader...
-Created loader with 1000 unique requests from                                   
-prompt_tokens=256,output_tokens=128.                                            
-                                                                                
-                                                                                
-╭─ Benchmarks ─────────────────────────────────────────────────────────────────╮
-│ [… synchr… (… Req:    4.0 req/s,    0.25s Lat,     1.0 Conc,     100 Comp, … │
-│               Tok:  517.1 gen/s, 2590.4 tot/s,  13.2ms TTFT,    1.8ms ITL, … │
-│ [… throug… (… Req:  160.7 req/s,    0.44s Lat,    70.1 Conc,     100 Comp, … │
-│               Tok: 20573.9 gen/s, 103049.7 tot/s,  67.8ms TTFT,    2.9ms IT… │
-│ [… consta… (… Req:   28.5 req/s,    0.26s Lat,     7.4 Conc,     100 Comp, … │
-│               Tok: 3652.6 gen/s, 18296.0 tot/s,  14.0ms TTFT,    1.9ms ITL,… │
-│ [… consta… (… Req:   63.6 req/s,    0.30s Lat,    18.8 Conc,     100 Comp, … │
-│               Tok: 8144.6 gen/s, 40796.8 tot/s,  21.1ms TTFT,    2.2ms ITL,… │
-│ [… consta… (… Req:  116.2 req/s,    0.37s Lat,    42.6 Conc,     100 Comp, … │
-│               Tok: 14874.5 gen/s, 74521.3 tot/s,  37.1ms TTFT,    2.6ms ITL… │
-│ [… consta… (… Req:  166.3 req/s,    0.42s Lat,    70.5 Conc,     100 Comp, … │
-│               Tok: 21279.1 gen/s, 106588.1 tot/s,  48.1ms TTFT,    3.0ms IT… │
-│ [… consta… (… Req:  172.8 req/s,    0.43s Lat,    74.0 Conc,     100 Comp, … │
-│               Tok: 22111.3 gen/s, 110767.5 tot/s,  51.5ms TTFT,    3.0ms IT… │
-│ [… consta… (… Req:  173.1 req/s,    0.43s Lat,    73.9 Conc,     100 Comp, … │
-│               Tok: 22155.1 gen/s, 110962.2 tot/s,  51.4ms TTFT,    3.0ms IT… │
-│ [… consta… (… Req:  171.8 req/s,    0.43s Lat,    73.4 Conc,     100 Comp, … │
-│               Tok: 21994.8 gen/s, 110169.8 tot/s,  51.6ms TTFT,    3.0ms IT… │
-│ [… consta… (… Req:  168.3 req/s,    0.43s Lat,    72.1 Conc,     100 Comp, … │
-│               Tok: 21546.6 gen/s, 107934.9 tot/s,  55.6ms TTFT,    2.9ms IT… │
-╰──────────────────────────────────────────────────────────────────────────────╯
-Generating... ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ (10/10) [ 0:00:38 < 0:00:00 ]                    
-                    
-Benchmarks Metadata:
-    Run id:cdc705fc-9bd0-410f-8bdc-88296bc2b87b
-    Duration:38.5 seconds
-    Profile:type=sweep, strategies=['synchronous', 'throughput', 'constant',    
-    'constant', 'constant', 'constant', 'constant', 'constant', 'constant',     
-    'constant'], max_concurrency=None                                           
-    Args:max_number=100, max_duration=100.0, warmup_number=None,                
-    warmup_duration=None, cooldown_number=None, cooldown_duration=None          
-    Worker:type_='generative_requests_worker' backend_type='openai_http'        
-    backend_target='http://inference-gateway' backend_model='facebook/opt-125m' 
-    backend_info={'max_output_tokens': 16384, 'timeout': 300, 'http2': True,    
-    'authorization': False, 'organization': None, 'project': None,              
-    'text_completions_path': '/v1/completions', 'chat_completions_path':        
-    '/v1/chat/completions'}                                                     
-    Request Loader:type_='generative_request_loader'                            
-    data='prompt_tokens=256,output_tokens=128' data_args=None                   
-    processor='facebook/opt-125m' processor_args=None                           
-    Extras:None
-                
-                
-Benchmarks Info:
-================================================================================
-======================================================================          
-Metadata                                        |||| Requests Made  ||| Prompt  
-Tok/Req  ||| Output Tok/Req  ||| Prompt Tok Total||| Output Tok Total||         
-      Benchmark| Start Time| End Time| Duration (s)|  Comp|  Inc|  Err|   Comp| 
-Inc|  Err|   Comp|  Inc|  Err|   Comp|  Inc|  Err|   Comp|  Inc|  Err           
----------------|-----------|---------|-------------|------|-----|-----|-------|-
-----|-----|-------|-----|-----|-------|-----|-----|-------|-----|-----          
-    synchronous|   01:38:16| 01:38:41|         24.8|   100|    0|    0|  257.1| 
-0.0|  0.0|  128.0|  0.0|  0.0|  25707|    0|    0|  12800|    0|    0           
-     throughput|   01:38:41| 01:38:42|          0.6|   100|    0|    0|  257.0| 
-0.0|  0.0|  128.0|  0.0|  0.0|  25704|    0|    0|  12800|    0|    0           
- constant@23.63|   01:38:42| 01:38:46|          3.5|   100|    0|    0|  257.1| 
-0.0|  0.0|  128.0|  0.0|  0.0|  25706|    0|    0|  12800|    0|    0           
- constant@43.22|   01:38:46| 01:38:48|          1.6|   100|    0|    0|  257.1| 
-0.0|  0.0|  128.0|  0.0|  0.0|  25706|    0|    0|  12800|    0|    0           
- constant@62.81|   01:38:48| 01:38:49|          0.9|   100|    0|    0|  257.1| 
-0.0|  0.0|  128.0|  0.0|  0.0|  25712|    0|    0|  12800|    0|    0           
- constant@82.39|   01:38:49| 01:38:50|          0.6|   100|    0|    0|  257.1| 
-0.0|  0.0|  128.0|  0.0|  0.0|  25706|    0|    0|  12800|    0|    0           
-constant@101.98|   01:38:50| 01:38:51|          0.6|   100|    0|    0|  257.1| 
-0.0|  0.0|  128.0|  0.0|  0.0|  25709|    0|    0|  12800|    0|    0           
-constant@121.57|   01:38:52| 01:38:52|          0.6|   100|    0|    0|  257.0| 
-0.0|  0.0|  128.0|  0.0|  0.0|  25702|    0|    0|  12800|    0|    0           
-constant@141.16|   01:38:53| 01:38:53|          0.6|   100|    0|    0|  257.1| 
-0.0|  0.0|  128.0|  0.0|  0.0|  25705|    0|    0|  12800|    0|    0           
-constant@160.75|   01:38:54| 01:38:54|          0.6|   100|    0|    0|  257.1| 
-0.0|  0.0|  128.0|  0.0|  0.0|  25708|    0|    0|  12800|    0|    0           
-================================================================================
-======================================================================          
-                 
-                 
-Benchmarks Stats:
-================================================================================
-=================================================================               
-Metadata       | Request Stats         || Out Tok/sec| Tot Tok/sec| Req Latency 
-(ms)||| TTFT (ms)        ||| ITL (ms)       ||| TPOT (ms)      ||               
-      Benchmark| Per Second| Concurrency|        mean|        mean| mean|       
-median|  p99| mean| median|   p99| mean| median| p99| mean| median| p99         
----------------|-----------|------------|------------|------------|-----|-------
-|-----|-----|-------|------|-----|-------|----|-----|-------|----               
-    synchronous|       4.04|        0.99|       517.1|      2590.4| 0.25|       
-0.24| 0.26| 13.2|   12.6|  16.7|  1.8|    1.8| 1.9|  1.8|    1.8| 1.9           
-     throughput|     160.75|       70.14|     20573.9|    103049.7| 0.44|       
-0.43| 0.49| 67.8|   51.5| 157.9|  2.9|    3.0| 3.0|  2.9|    2.9| 3.0           
- constant@23.63|      28.54|        7.39|      3652.6|     18296.0| 0.26|       
-0.25| 0.28| 14.0|   12.8|  22.5|  1.9|    1.9| 2.1|  1.9|    1.9| 2.0           
- constant@43.22|      63.63|       18.78|      8144.6|     40796.8| 0.30|       
-0.30| 0.34| 21.1|   15.1|  43.0|  2.2|    2.2| 2.4|  2.1|    2.2| 2.4           
- constant@62.81|     116.22|       42.56|     14874.5|     74521.3| 0.37|       
-0.37| 0.41| 37.1|   38.1|  62.6|  2.6|    2.7| 2.8|  2.6|    2.7| 2.8           
- constant@82.39|     166.26|       70.48|     21279.1|    106588.1| 0.42|       
-0.43| 0.45| 48.1|   57.9|  79.8|  3.0|    3.0| 3.1|  2.9|    2.9| 3.0           
-constant@101.98|     172.76|       74.04|     22111.3|    110767.5| 0.43|       
-0.44| 0.46| 51.5|   62.9|  85.5|  3.0|    3.0| 3.1|  2.9|    2.9| 3.0           
-constant@121.57|     173.10|       73.86|     22155.1|    110962.2| 0.43|       
-0.43| 0.45| 51.4|   56.4|  82.5|  3.0|    2.9| 3.1|  2.9|    2.9| 3.0           
-constant@141.16|     171.85|       73.43|     21994.8|    110169.8| 0.43|       
-0.43| 0.46| 51.6|   57.8|  85.6|  3.0|    2.9| 3.1|  2.9|    2.9| 3.1           
-constant@160.75|     168.35|       72.06|     21546.6|    107934.9| 0.43|       
-0.44| 0.46| 55.6|   66.3|  90.5|  2.9|    2.9| 3.1|  2.9|    2.9| 3.0           
-================================================================================
-=================================================================               
-                           
-Saving benchmarks report...
-Benchmarks report saved to /requests/guidellm-evaluate-20250427-2137.json
-                      
-Benchmarking complete.
+Running ShareGPT benchmark...
+[32;20m[2025-04-29 03:16:41,144] INFO:[0m Loaded 55 ShareGPT entries [3m(sharegpt-qa.py:202:__main__)[0m
+[1m[2025-04-29 03:16:41,271] DEBUG:[0m Starting the asyncio loop [3m(utils.py:90:AsyncLoopWrapper)[0m
+[32;20m[2025-04-29 03:16:41,271] INFO:[0m Benchmark started: 55 prompts at 1.34 QPS [3m(sharegpt-qa.py:143:__main__)[0m
+[32;20m[2025-04-29 03:17:21,573] INFO:[0m Waiting for 5 tasks to finish [3m(utils.py:67:AsyncLoopWrapper)[0m
+[32;20m[2025-04-29 03:17:25,313] INFO:[0m All requests completed [3m(sharegpt-qa.py:163:__main__)[0m
+[32;20m[2025-04-29 03:17:25,326] INFO:[0m Results written to /tmp/warmup.csv [3m(sharegpt-qa.py:213:__main__)[0m
+[32;20m[2025-04-29 03:17:25,326] INFO:[0m Completed 55 requests in 44.04s (1.25 QPS) [3m(sharegpt-qa.py:184:__main__)[0m
+[32;20m[2025-04-29 03:17:25,327] INFO:[0m Average TTFT: 0.037s [3m(sharegpt-qa.py:185:__main__)[0m
+[32;20m[2025-04-29 03:17:25,328] INFO:[0m Avg generation speed per req: 82.5 tokens/s [3m(sharegpt-qa.py:186:__main__)[0m
+[32;20m[2025-04-29 03:17:25,328] INFO:[0m Waiting for remaining tasks to finish [3m(utils.py:105:AsyncLoopWrapper)[0m
+[32;20m[2025-04-29 03:17:25,328] INFO:[0m Waiting for 0 tasks to finish [3m(utils.py:67:AsyncLoopWrapper)[0m
+[1m[2025-04-29 03:17:25,329] DEBUG:[0m Stopping the loop! [3m(utils.py:102:AsyncLoopWrapper)[0m
+[32;20m[2025-04-29 03:17:25,329] INFO:[0m Benchmark completed and asyncio loop stopped [3m(sharegpt-qa.py:220:__main__)[0m
+[32;20m[2025-04-29 03:17:36,553] INFO:[0m Loaded 252 ShareGPT entries [3m(sharegpt-qa.py:202:__main__)[0m
+[1m[2025-04-29 03:17:36,651] DEBUG:[0m Starting the asyncio loop [3m(utils.py:90:AsyncLoopWrapper)[0m
+[32;20m[2025-04-29 03:17:36,651] INFO:[0m Benchmark started: 252 prompts at 1.34 QPS [3m(sharegpt-qa.py:143:__main__)[0m
+[32;20m[2025-04-29 03:20:43,967] INFO:[0m Waiting for 2 tasks to finish [3m(utils.py:67:AsyncLoopWrapper)[0m
+[32;20m[2025-04-29 03:20:45,759] INFO:[0m All requests completed [3m(sharegpt-qa.py:163:__main__)[0m
+[32;20m[2025-04-29 03:20:45,768] INFO:[0m Results written to /requests/lmbenchmark_sharegpt_output_1.34.csv [3m(sharegpt-qa.py:213:__main__)[0m
+[32;20m[2025-04-29 03:20:45,769] INFO:[0m Completed 252 requests in 189.11s (1.33 QPS) [3m(sharegpt-qa.py:184:__main__)[0m
+[32;20m[2025-04-29 03:20:45,769] INFO:[0m Average TTFT: 0.036s [3m(sharegpt-qa.py:185:__main__)[0m
+[32;20m[2025-04-29 03:20:45,770] INFO:[0m Avg generation speed per req: 86.1 tokens/s [3m(sharegpt-qa.py:186:__main__)[0m
+[32;20m[2025-04-29 03:20:45,770] INFO:[0m Waiting for remaining tasks to finish [3m(utils.py:105:AsyncLoopWrapper)[0m
+[32;20m[2025-04-29 03:20:45,771] INFO:[0m Waiting for 0 tasks to finish [3m(utils.py:67:AsyncLoopWrapper)[0m
+[1m[2025-04-29 03:20:45,771] DEBUG:[0m Stopping the loop! [3m(utils.py:102:AsyncLoopWrapper)[0m
+[32;20m[2025-04-29 03:20:45,771] INFO:[0m Benchmark completed and asyncio loop stopped [3m(sharegpt-qa.py:220:__main__)[0m
