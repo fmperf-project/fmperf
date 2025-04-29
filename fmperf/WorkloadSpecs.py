@@ -328,8 +328,10 @@ class LMBenchmarkWorkload(WorkloadSpec):
         # Get the model URL based on the model type
         if isinstance(model, DeployedModel):
             model_url = model.url
+            folder_name = model.name
         else:
             model_url = model.get_service_url()
+            folder_name = model.name
             
         # Ensure model_url has http:// prefix
         if not model_url.startswith(('http://', 'https://')):
@@ -338,7 +340,7 @@ class LMBenchmarkWorkload(WorkloadSpec):
         env = [
             {"name": "MODEL", "value": self.model_name},
             {"name": "BASE_URL", "value": model_url},
-            {"name": "SAVE_FILE_KEY", "value": "/requests/lmbenchmark"},
+            {"name": "SAVE_FILE_KEY", "value": f"/requests/{folder_name}/LMBench"},
             {"name": "SCENARIOS", "value": self.scenarios},
         ]
         
