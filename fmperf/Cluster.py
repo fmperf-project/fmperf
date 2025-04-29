@@ -492,13 +492,14 @@ class Cluster:
                             {
                                 "name": "init-cache-dirs",
                                 "image": "busybox",
-                                "command": ["sh", "-c", "mkdir -p /requests/hf_cache/datasets && chmod -R 777 /requests && ls -la /requests"],
+                                "command": ["sh", "-c", "mkdir -p /requests/hf_cache/datasets && FOLDER_NAME=$(echo $SAVE_FILE_KEY | sed 's|/requests/||' | sed 's|/LMBench||') && mkdir -p /requests/$FOLDER_NAME && chmod -R 777 /requests && ls -la /requests"],
                                 "volumeMounts": [
                                     {
                                         "name": "requests",
                                         "mountPath": "/requests"
                                     }
-                                ]
+                                ],
+                                "env": env
                             }
                         ],
                         "containers": [
