@@ -59,7 +59,7 @@ if __name__ == "__main__":
     LOCATION: str = "remote"
 
     ## USER Entry: File Location for model workload parameters
-    WORKLOAD_FILE = os.path.join(os.path.dirname(__file__), "lmbench_vllmd_workload_spec.yaml")
+    WORKLOAD_FILE = os.path.join(os.path.dirname(__file__), "lmbench_llm_d_workload_spec.yaml")
 
     # Initialize Kubernetes
     cluster, workload_pvc_name = initialize_kubernetes(LOCATION)
@@ -71,7 +71,7 @@ if __name__ == "__main__":
     # Create stack spec for the existing vllm-d deployment
     stack_spec = StackSpec(
         name="vllm",
-        stack_type="vllm-d",  # This will automatically set endpoint to vllm-router-service
+        stack_type="vllm",  # This will automatically set endpoint to vllm-router-service
         refresh_interval=300,  # Refresh model list every 5 minutes
         endpoint_url="llama-3-8b"  # Service name
     )
