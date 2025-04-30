@@ -58,12 +58,19 @@ class StackSpec:
             if not self.health_check_path:
                 self.health_check_path = "/health"
         
-        elif self.stack_type == "vllm-d":
+        elif self.stack_type == "llm-d":
             if not self.endpoint_url:
                 # Use the in-cluster service name and port
                 self.endpoint_url = "inference-gateway"
             if not self.health_check_path:
                 self.health_check_path = "/health"
+
+        elif self.stack_type == "vllm":
+            if not self.endpoint_url:
+                # Use the in-cluster service name and port
+                self.endpoint_url = "llama-3-8b"
+            if not self.health_check_path:
+                self.health_check_path = "/health"       
 
     def get_service_url(self) -> str:
         """Get the service endpoint URL"""
