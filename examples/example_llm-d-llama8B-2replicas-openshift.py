@@ -59,7 +59,7 @@ if __name__ == "__main__":
     LOCATION: str = "remote"
 
     ## USER Entry: File Location for model workload parameters
-    WORKLOAD_FILE = os.path.join(os.path.dirname(__file__), "lmbench_llama8b_workload_spec")
+    WORKLOAD_FILE = os.path.join(os.path.dirname(__file__), "lmbench_llama8b_2replicas_spec.yaml")
 
     # Initialize Kubernetes
     cluster, workload_pvc_name = initialize_kubernetes(LOCATION)
