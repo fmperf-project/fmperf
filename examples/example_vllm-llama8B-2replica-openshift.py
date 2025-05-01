@@ -70,7 +70,7 @@ if __name__ == "__main__":
 
     # Create stack spec for the existing vllm-d deployment
     stack_spec = StackSpec(
-        name="vllm",
+        name="vllm-2replica",
         stack_type="vllm",  # This will automatically set endpoint to vllm-router-service
         refresh_interval=300,  # Refresh model list every 5 minutes
         endpoint_url="llama-3-8b-2replica"  # Service name
