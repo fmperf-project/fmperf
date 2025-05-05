@@ -1,27 +1,157 @@
 Running ShareGPT benchmark...
-[32;20m[2025-05-01 18:49:15,967] INFO:[0m Loaded 55 ShareGPT entries [3m(sharegpt-qa.py:202:__main__)[0m
-[1m[2025-05-01 18:49:16,101] DEBUG:[0m Starting the asyncio loop [3m(utils.py:90:AsyncLoopWrapper)[0m
-[32;20m[2025-05-01 18:49:16,101] INFO:[0m Benchmark started: 55 prompts at 1.34 QPS [3m(sharegpt-qa.py:143:__main__)[0m
-[32;20m[2025-05-01 18:49:56,402] INFO:[0m Waiting for 29 tasks to finish [3m(utils.py:67:AsyncLoopWrapper)[0m
-[32;20m[2025-05-01 18:50:33,482] INFO:[0m All requests completed [3m(sharegpt-qa.py:163:__main__)[0m
-[32;20m[2025-05-01 18:50:33,499] INFO:[0m Results written to /tmp/warmup.csv [3m(sharegpt-qa.py:213:__main__)[0m
-[32;20m[2025-05-01 18:50:33,500] INFO:[0m Completed 55 requests in 77.38s (0.71 QPS) [3m(sharegpt-qa.py:184:__main__)[0m
-[32;20m[2025-05-01 18:50:33,500] INFO:[0m Average TTFT: 0.222s [3m(sharegpt-qa.py:185:__main__)[0m
-[32;20m[2025-05-01 18:50:33,502] INFO:[0m Avg generation speed per req: 12.3 tokens/s [3m(sharegpt-qa.py:186:__main__)[0m
-[32;20m[2025-05-01 18:50:33,502] INFO:[0m Waiting for remaining tasks to finish [3m(utils.py:105:AsyncLoopWrapper)[0m
-[32;20m[2025-05-01 18:50:33,502] INFO:[0m Waiting for 0 tasks to finish [3m(utils.py:67:AsyncLoopWrapper)[0m
-[1m[2025-05-01 18:50:33,503] DEBUG:[0m Stopping the loop! [3m(utils.py:102:AsyncLoopWrapper)[0m
-[32;20m[2025-05-01 18:50:33,503] INFO:[0m Benchmark completed and asyncio loop stopped [3m(sharegpt-qa.py:220:__main__)[0m
-[32;20m[2025-05-01 18:50:44,803] INFO:[0m Loaded 252 ShareGPT entries [3m(sharegpt-qa.py:202:__main__)[0m
-[1m[2025-05-01 18:50:44,897] DEBUG:[0m Starting the asyncio loop [3m(utils.py:90:AsyncLoopWrapper)[0m
-[32;20m[2025-05-01 18:50:44,897] INFO:[0m Benchmark started: 252 prompts at 1.34 QPS [3m(sharegpt-qa.py:143:__main__)[0m
-[32;20m[2025-05-01 18:53:52,214] INFO:[0m Waiting for 132 tasks to finish [3m(utils.py:67:AsyncLoopWrapper)[0m
-[32;20m[2025-05-01 18:56:04,196] INFO:[0m All requests completed [3m(sharegpt-qa.py:163:__main__)[0m
-[32;20m[2025-05-01 18:56:04,205] INFO:[0m Results written to /requests/vllm-70b/LMBench_sharegpt_output_1.34.csv [3m(sharegpt-qa.py:213:__main__)[0m
-[32;20m[2025-05-01 18:56:04,205] INFO:[0m Completed 252 requests in 319.30s (0.79 QPS) [3m(sharegpt-qa.py:184:__main__)[0m
-[32;20m[2025-05-01 18:56:04,205] INFO:[0m Average TTFT: 66.618s [3m(sharegpt-qa.py:185:__main__)[0m
-[32;20m[2025-05-01 18:56:04,206] INFO:[0m Avg generation speed per req: 11.6 tokens/s [3m(sharegpt-qa.py:186:__main__)[0m
-[32;20m[2025-05-01 18:56:04,206] INFO:[0m Waiting for remaining tasks to finish [3m(utils.py:105:AsyncLoopWrapper)[0m
-[32;20m[2025-05-01 18:56:04,207] INFO:[0m Waiting for 0 tasks to finish [3m(utils.py:67:AsyncLoopWrapper)[0m
-[1m[2025-05-01 18:56:04,207] DEBUG:[0m Stopping the loop! [3m(utils.py:102:AsyncLoopWrapper)[0m
-[32;20m[2025-05-01 18:56:04,207] INFO:[0m Benchmark completed and asyncio loop stopped [3m(sharegpt-qa.py:220:__main__)[0m
+[32;20m[2025-05-04 23:38:09,116] INFO:[0m Loaded 55 ShareGPT entries [3m(sharegpt-qa.py:202:__main__)[0m
+[1m[2025-05-04 23:38:09,217] DEBUG:[0m Starting the asyncio loop [3m(utils.py:90:AsyncLoopWrapper)[0m
+[32;20m[2025-05-04 23:38:09,217] INFO:[0m Benchmark started: 55 prompts at 0.50 QPS [3m(sharegpt-qa.py:143:__main__)[0m
+[32;20m[2025-05-04 23:39:57,219] INFO:[0m Waiting for 7 tasks to finish [3m(utils.py:67:AsyncLoopWrapper)[0m
+[32;20m[2025-05-04 23:40:13,284] INFO:[0m All requests completed [3m(sharegpt-qa.py:163:__main__)[0m
+[32;20m[2025-05-04 23:40:13,303] INFO:[0m Results written to /tmp/warmup.csv [3m(sharegpt-qa.py:213:__main__)[0m
+[32;20m[2025-05-04 23:40:13,304] INFO:[0m Completed 55 requests in 124.07s (0.44 QPS) [3m(sharegpt-qa.py:184:__main__)[0m
+[32;20m[2025-05-04 23:40:13,304] INFO:[0m Average TTFT: 0.236s [3m(sharegpt-qa.py:185:__main__)[0m
+[32;20m[2025-05-04 23:40:13,305] INFO:[0m Avg generation speed per req: 18.4 tokens/s [3m(sharegpt-qa.py:186:__main__)[0m
+[32;20m[2025-05-04 23:40:13,305] INFO:[0m Waiting for remaining tasks to finish [3m(utils.py:105:AsyncLoopWrapper)[0m
+[32;20m[2025-05-04 23:40:13,306] INFO:[0m Waiting for 0 tasks to finish [3m(utils.py:67:AsyncLoopWrapper)[0m
+[1m[2025-05-04 23:40:13,306] DEBUG:[0m Stopping the loop! [3m(utils.py:102:AsyncLoopWrapper)[0m
+[32;20m[2025-05-04 23:40:13,306] INFO:[0m Benchmark completed and asyncio loop stopped [3m(sharegpt-qa.py:220:__main__)[0m
+[32;20m[2025-05-04 23:40:24,286] INFO:[0m Loaded 252 ShareGPT entries [3m(sharegpt-qa.py:202:__main__)[0m
+[1m[2025-05-04 23:40:24,351] DEBUG:[0m Starting the asyncio loop [3m(utils.py:90:AsyncLoopWrapper)[0m
+[32;20m[2025-05-04 23:40:24,351] INFO:[0m Benchmark started: 252 prompts at 0.50 QPS [3m(sharegpt-qa.py:143:__main__)[0m
+[32;20m[2025-05-04 23:48:46,354] INFO:[0m Waiting for 5 tasks to finish [3m(utils.py:67:AsyncLoopWrapper)[0m
+[32;20m[2025-05-04 23:48:54,994] INFO:[0m All requests completed [3m(sharegpt-qa.py:163:__main__)[0m
+[32;20m[2025-05-04 23:48:55,008] INFO:[0m Results written to /requests/lmcache-vllm-70b/LMBench_sharegpt_output_0.5.csv [3m(sharegpt-qa.py:213:__main__)[0m
+[32;20m[2025-05-04 23:48:55,009] INFO:[0m Completed 252 requests in 510.64s (0.49 QPS) [3m(sharegpt-qa.py:184:__main__)[0m
+[32;20m[2025-05-04 23:48:55,009] INFO:[0m Average TTFT: 0.211s [3m(sharegpt-qa.py:185:__main__)[0m
+[32;20m[2025-05-04 23:48:55,010] INFO:[0m Avg generation speed per req: 23.0 tokens/s [3m(sharegpt-qa.py:186:__main__)[0m
+[32;20m[2025-05-04 23:48:55,010] INFO:[0m Waiting for remaining tasks to finish [3m(utils.py:105:AsyncLoopWrapper)[0m
+[32;20m[2025-05-04 23:48:55,011] INFO:[0m Waiting for 0 tasks to finish [3m(utils.py:67:AsyncLoopWrapper)[0m
+[1m[2025-05-04 23:48:55,011] DEBUG:[0m Stopping the loop! [3m(utils.py:102:AsyncLoopWrapper)[0m
+[32;20m[2025-05-04 23:48:55,011] INFO:[0m Benchmark completed and asyncio loop stopped [3m(sharegpt-qa.py:220:__main__)[0m
+[32;20m[2025-05-04 23:49:05,951] INFO:[0m Loaded 55 ShareGPT entries [3m(sharegpt-qa.py:202:__main__)[0m
+[1m[2025-05-04 23:49:06,016] DEBUG:[0m Starting the asyncio loop [3m(utils.py:90:AsyncLoopWrapper)[0m
+[32;20m[2025-05-04 23:49:06,016] INFO:[0m Benchmark started: 55 prompts at 0.67 QPS [3m(sharegpt-qa.py:143:__main__)[0m
+[32;20m[2025-05-04 23:50:26,616] INFO:[0m Waiting for 8 tasks to finish [3m(utils.py:67:AsyncLoopWrapper)[0m
+[32;20m[2025-05-04 23:50:42,804] INFO:[0m All requests completed [3m(sharegpt-qa.py:163:__main__)[0m
+[32;20m[2025-05-04 23:50:42,817] INFO:[0m Results written to /tmp/warmup.csv [3m(sharegpt-qa.py:213:__main__)[0m
+[32;20m[2025-05-04 23:50:42,817] INFO:[0m Completed 55 requests in 96.79s (0.57 QPS) [3m(sharegpt-qa.py:184:__main__)[0m
+[32;20m[2025-05-04 23:50:42,817] INFO:[0m Average TTFT: 0.224s [3m(sharegpt-qa.py:185:__main__)[0m
+[32;20m[2025-05-04 23:50:42,819] INFO:[0m Avg generation speed per req: 17.7 tokens/s [3m(sharegpt-qa.py:186:__main__)[0m
+[32;20m[2025-05-04 23:50:42,819] INFO:[0m Waiting for remaining tasks to finish [3m(utils.py:105:AsyncLoopWrapper)[0m
+[32;20m[2025-05-04 23:50:42,819] INFO:[0m Waiting for 0 tasks to finish [3m(utils.py:67:AsyncLoopWrapper)[0m
+[1m[2025-05-04 23:50:42,819] DEBUG:[0m Stopping the loop! [3m(utils.py:102:AsyncLoopWrapper)[0m
+[32;20m[2025-05-04 23:50:42,819] INFO:[0m Benchmark completed and asyncio loop stopped [3m(sharegpt-qa.py:220:__main__)[0m
+[32;20m[2025-05-04 23:50:53,755] INFO:[0m Loaded 252 ShareGPT entries [3m(sharegpt-qa.py:202:__main__)[0m
+[1m[2025-05-04 23:50:53,820] DEBUG:[0m Starting the asyncio loop [3m(utils.py:90:AsyncLoopWrapper)[0m
+[32;20m[2025-05-04 23:50:53,820] INFO:[0m Benchmark started: 252 prompts at 0.67 QPS [3m(sharegpt-qa.py:143:__main__)[0m
+[32;20m[2025-05-04 23:57:08,449] INFO:[0m Waiting for 7 tasks to finish [3m(utils.py:67:AsyncLoopWrapper)[0m
+[32;20m[2025-05-04 23:57:17,234] INFO:[0m All requests completed [3m(sharegpt-qa.py:163:__main__)[0m
+[32;20m[2025-05-04 23:57:17,242] INFO:[0m Results written to /requests/lmcache-vllm-70b/LMBench_sharegpt_output_0.67.csv [3m(sharegpt-qa.py:213:__main__)[0m
+[32;20m[2025-05-04 23:57:17,242] INFO:[0m Completed 252 requests in 383.41s (0.66 QPS) [3m(sharegpt-qa.py:184:__main__)[0m
+[32;20m[2025-05-04 23:57:17,243] INFO:[0m Average TTFT: 0.213s [3m(sharegpt-qa.py:185:__main__)[0m
+[32;20m[2025-05-04 23:57:17,243] INFO:[0m Avg generation speed per req: 30.0 tokens/s [3m(sharegpt-qa.py:186:__main__)[0m
+[32;20m[2025-05-04 23:57:17,243] INFO:[0m Waiting for remaining tasks to finish [3m(utils.py:105:AsyncLoopWrapper)[0m
+[32;20m[2025-05-04 23:57:17,243] INFO:[0m Waiting for 0 tasks to finish [3m(utils.py:67:AsyncLoopWrapper)[0m
+[1m[2025-05-04 23:57:17,244] DEBUG:[0m Stopping the loop! [3m(utils.py:102:AsyncLoopWrapper)[0m
+[32;20m[2025-05-04 23:57:17,244] INFO:[0m Benchmark completed and asyncio loop stopped [3m(sharegpt-qa.py:220:__main__)[0m
+[32;20m[2025-05-04 23:57:28,147] INFO:[0m Loaded 55 ShareGPT entries [3m(sharegpt-qa.py:202:__main__)[0m
+[1m[2025-05-04 23:57:28,214] DEBUG:[0m Starting the asyncio loop [3m(utils.py:90:AsyncLoopWrapper)[0m
+[32;20m[2025-05-04 23:57:28,214] INFO:[0m Benchmark started: 55 prompts at 0.84 QPS [3m(sharegpt-qa.py:143:__main__)[0m
+[32;20m[2025-05-04 23:58:32,501] INFO:[0m Waiting for 10 tasks to finish [3m(utils.py:67:AsyncLoopWrapper)[0m
+[32;20m[2025-05-04 23:58:49,665] INFO:[0m All requests completed [3m(sharegpt-qa.py:163:__main__)[0m
+[32;20m[2025-05-04 23:58:49,671] INFO:[0m Results written to /tmp/warmup.csv [3m(sharegpt-qa.py:213:__main__)[0m
+[32;20m[2025-05-04 23:58:49,671] INFO:[0m Completed 55 requests in 81.45s (0.68 QPS) [3m(sharegpt-qa.py:184:__main__)[0m
+[32;20m[2025-05-04 23:58:49,671] INFO:[0m Average TTFT: 0.227s [3m(sharegpt-qa.py:185:__main__)[0m
+[32;20m[2025-05-04 23:58:49,672] INFO:[0m Avg generation speed per req: 16.9 tokens/s [3m(sharegpt-qa.py:186:__main__)[0m
+[32;20m[2025-05-04 23:58:49,672] INFO:[0m Waiting for remaining tasks to finish [3m(utils.py:105:AsyncLoopWrapper)[0m
+[32;20m[2025-05-04 23:58:49,672] INFO:[0m Waiting for 0 tasks to finish [3m(utils.py:67:AsyncLoopWrapper)[0m
+[1m[2025-05-04 23:58:49,672] DEBUG:[0m Stopping the loop! [3m(utils.py:102:AsyncLoopWrapper)[0m
+[32;20m[2025-05-04 23:58:49,673] INFO:[0m Benchmark completed and asyncio loop stopped [3m(sharegpt-qa.py:220:__main__)[0m
+[32;20m[2025-05-04 23:59:00,592] INFO:[0m Loaded 252 ShareGPT entries [3m(sharegpt-qa.py:202:__main__)[0m
+[1m[2025-05-04 23:59:00,659] DEBUG:[0m Starting the asyncio loop [3m(utils.py:90:AsyncLoopWrapper)[0m
+[32;20m[2025-05-04 23:59:00,659] INFO:[0m Benchmark started: 252 prompts at 0.84 QPS [3m(sharegpt-qa.py:143:__main__)[0m
+[32;20m[2025-05-05 00:03:59,471] INFO:[0m Waiting for 8 tasks to finish [3m(utils.py:67:AsyncLoopWrapper)[0m
+[32;20m[2025-05-05 00:04:08,470] INFO:[0m All requests completed [3m(sharegpt-qa.py:163:__main__)[0m
+[32;20m[2025-05-05 00:04:08,484] INFO:[0m Results written to /requests/lmcache-vllm-70b/LMBench_sharegpt_output_0.84.csv [3m(sharegpt-qa.py:213:__main__)[0m
+[32;20m[2025-05-05 00:04:08,485] INFO:[0m Completed 252 requests in 307.81s (0.82 QPS) [3m(sharegpt-qa.py:184:__main__)[0m
+[32;20m[2025-05-05 00:04:08,485] INFO:[0m Average TTFT: 0.214s [3m(sharegpt-qa.py:185:__main__)[0m
+[32;20m[2025-05-05 00:04:08,486] INFO:[0m Avg generation speed per req: 24.7 tokens/s [3m(sharegpt-qa.py:186:__main__)[0m
+[32;20m[2025-05-05 00:04:08,487] INFO:[0m Waiting for remaining tasks to finish [3m(utils.py:105:AsyncLoopWrapper)[0m
+[32;20m[2025-05-05 00:04:08,487] INFO:[0m Waiting for 0 tasks to finish [3m(utils.py:67:AsyncLoopWrapper)[0m
+[1m[2025-05-05 00:04:08,487] DEBUG:[0m Stopping the loop! [3m(utils.py:102:AsyncLoopWrapper)[0m
+[32;20m[2025-05-05 00:04:08,487] INFO:[0m Benchmark completed and asyncio loop stopped [3m(sharegpt-qa.py:220:__main__)[0m
+[32;20m[2025-05-05 00:04:19,431] INFO:[0m Loaded 55 ShareGPT entries [3m(sharegpt-qa.py:202:__main__)[0m
+[1m[2025-05-05 00:04:19,498] DEBUG:[0m Starting the asyncio loop [3m(utils.py:90:AsyncLoopWrapper)[0m
+[32;20m[2025-05-05 00:04:19,498] INFO:[0m Benchmark started: 55 prompts at 1.00 QPS [3m(sharegpt-qa.py:143:__main__)[0m
+[32;20m[2025-05-05 00:05:13,501] INFO:[0m Waiting for 14 tasks to finish [3m(utils.py:67:AsyncLoopWrapper)[0m
+[32;20m[2025-05-05 00:05:31,975] INFO:[0m All requests completed [3m(sharegpt-qa.py:163:__main__)[0m
+[32;20m[2025-05-05 00:05:31,990] INFO:[0m Results written to /tmp/warmup.csv [3m(sharegpt-qa.py:213:__main__)[0m
+[32;20m[2025-05-05 00:05:31,991] INFO:[0m Completed 55 requests in 72.48s (0.76 QPS) [3m(sharegpt-qa.py:184:__main__)[0m
+[32;20m[2025-05-05 00:05:31,991] INFO:[0m Average TTFT: 0.224s [3m(sharegpt-qa.py:185:__main__)[0m
+[32;20m[2025-05-05 00:05:31,992] INFO:[0m Avg generation speed per req: 16.5 tokens/s [3m(sharegpt-qa.py:186:__main__)[0m
+[32;20m[2025-05-05 00:05:31,992] INFO:[0m Waiting for remaining tasks to finish [3m(utils.py:105:AsyncLoopWrapper)[0m
+[32;20m[2025-05-05 00:05:31,993] INFO:[0m Waiting for 0 tasks to finish [3m(utils.py:67:AsyncLoopWrapper)[0m
+[1m[2025-05-05 00:05:31,993] DEBUG:[0m Stopping the loop! [3m(utils.py:102:AsyncLoopWrapper)[0m
+[32;20m[2025-05-05 00:05:31,993] INFO:[0m Benchmark completed and asyncio loop stopped [3m(sharegpt-qa.py:220:__main__)[0m
+[32;20m[2025-05-05 00:05:42,945] INFO:[0m Loaded 252 ShareGPT entries [3m(sharegpt-qa.py:202:__main__)[0m
+[1m[2025-05-05 00:05:43,011] DEBUG:[0m Starting the asyncio loop [3m(utils.py:90:AsyncLoopWrapper)[0m
+[32;20m[2025-05-05 00:05:43,011] INFO:[0m Benchmark started: 252 prompts at 1.00 QPS [3m(sharegpt-qa.py:143:__main__)[0m
+[32;20m[2025-05-05 00:09:54,013] INFO:[0m Waiting for 11 tasks to finish [3m(utils.py:67:AsyncLoopWrapper)[0m
+[32;20m[2025-05-05 00:10:06,719] INFO:[0m All requests completed [3m(sharegpt-qa.py:163:__main__)[0m
+[32;20m[2025-05-05 00:10:06,728] INFO:[0m Results written to /requests/lmcache-vllm-70b/LMBench_sharegpt_output_1.csv [3m(sharegpt-qa.py:213:__main__)[0m
+[32;20m[2025-05-05 00:10:06,729] INFO:[0m Completed 252 requests in 263.71s (0.96 QPS) [3m(sharegpt-qa.py:184:__main__)[0m
+[32;20m[2025-05-05 00:10:06,729] INFO:[0m Average TTFT: 0.219s [3m(sharegpt-qa.py:185:__main__)[0m
+[32;20m[2025-05-05 00:10:06,729] INFO:[0m Avg generation speed per req: 23.7 tokens/s [3m(sharegpt-qa.py:186:__main__)[0m
+[32;20m[2025-05-05 00:10:06,729] INFO:[0m Waiting for remaining tasks to finish [3m(utils.py:105:AsyncLoopWrapper)[0m
+[32;20m[2025-05-05 00:10:06,730] INFO:[0m Waiting for 0 tasks to finish [3m(utils.py:67:AsyncLoopWrapper)[0m
+[1m[2025-05-05 00:10:06,730] DEBUG:[0m Stopping the loop! [3m(utils.py:102:AsyncLoopWrapper)[0m
+[32;20m[2025-05-05 00:10:06,730] INFO:[0m Benchmark completed and asyncio loop stopped [3m(sharegpt-qa.py:220:__main__)[0m
+[32;20m[2025-05-05 00:10:17,662] INFO:[0m Loaded 55 ShareGPT entries [3m(sharegpt-qa.py:202:__main__)[0m
+[1m[2025-05-05 00:10:17,728] DEBUG:[0m Starting the asyncio loop [3m(utils.py:90:AsyncLoopWrapper)[0m
+[32;20m[2025-05-05 00:10:17,728] INFO:[0m Benchmark started: 55 prompts at 1.17 QPS [3m(sharegpt-qa.py:143:__main__)[0m
+[32;20m[2025-05-05 00:11:03,884] INFO:[0m Waiting for 17 tasks to finish [3m(utils.py:67:AsyncLoopWrapper)[0m
+[32;20m[2025-05-05 00:11:23,446] INFO:[0m All requests completed [3m(sharegpt-qa.py:163:__main__)[0m
+[32;20m[2025-05-05 00:11:23,459] INFO:[0m Results written to /tmp/warmup.csv [3m(sharegpt-qa.py:213:__main__)[0m
+[32;20m[2025-05-05 00:11:23,459] INFO:[0m Completed 55 requests in 65.72s (0.84 QPS) [3m(sharegpt-qa.py:184:__main__)[0m
+[32;20m[2025-05-05 00:11:23,459] INFO:[0m Average TTFT: 0.227s [3m(sharegpt-qa.py:185:__main__)[0m
+[32;20m[2025-05-05 00:11:23,461] INFO:[0m Avg generation speed per req: 15.6 tokens/s [3m(sharegpt-qa.py:186:__main__)[0m
+[32;20m[2025-05-05 00:11:23,461] INFO:[0m Waiting for remaining tasks to finish [3m(utils.py:105:AsyncLoopWrapper)[0m
+[32;20m[2025-05-05 00:11:23,461] INFO:[0m Waiting for 0 tasks to finish [3m(utils.py:67:AsyncLoopWrapper)[0m
+[1m[2025-05-05 00:11:23,461] DEBUG:[0m Stopping the loop! [3m(utils.py:102:AsyncLoopWrapper)[0m
+[32;20m[2025-05-05 00:11:23,461] INFO:[0m Benchmark completed and asyncio loop stopped [3m(sharegpt-qa.py:220:__main__)[0m
+[32;20m[2025-05-05 00:11:34,407] INFO:[0m Loaded 252 ShareGPT entries [3m(sharegpt-qa.py:202:__main__)[0m
+[1m[2025-05-05 00:11:34,474] DEBUG:[0m Starting the asyncio loop [3m(utils.py:90:AsyncLoopWrapper)[0m
+[32;20m[2025-05-05 00:11:34,474] INFO:[0m Benchmark started: 252 prompts at 1.17 QPS [3m(sharegpt-qa.py:143:__main__)[0m
+[32;20m[2025-05-05 00:15:09,006] INFO:[0m Waiting for 12 tasks to finish [3m(utils.py:67:AsyncLoopWrapper)[0m
+[32;20m[2025-05-05 00:15:24,473] INFO:[0m All requests completed [3m(sharegpt-qa.py:163:__main__)[0m
+[32;20m[2025-05-05 00:15:24,489] INFO:[0m Results written to /requests/lmcache-vllm-70b/LMBench_sharegpt_output_1.17.csv [3m(sharegpt-qa.py:213:__main__)[0m
+[32;20m[2025-05-05 00:15:24,489] INFO:[0m Completed 252 requests in 230.00s (1.10 QPS) [3m(sharegpt-qa.py:184:__main__)[0m
+[32;20m[2025-05-05 00:15:24,490] INFO:[0m Average TTFT: 0.224s [3m(sharegpt-qa.py:185:__main__)[0m
+[32;20m[2025-05-05 00:15:24,491] INFO:[0m Avg generation speed per req: 17.0 tokens/s [3m(sharegpt-qa.py:186:__main__)[0m
+[32;20m[2025-05-05 00:15:24,491] INFO:[0m Waiting for remaining tasks to finish [3m(utils.py:105:AsyncLoopWrapper)[0m
+[32;20m[2025-05-05 00:15:24,491] INFO:[0m Waiting for 0 tasks to finish [3m(utils.py:67:AsyncLoopWrapper)[0m
+[1m[2025-05-05 00:15:24,492] DEBUG:[0m Stopping the loop! [3m(utils.py:102:AsyncLoopWrapper)[0m
+[32;20m[2025-05-05 00:15:24,492] INFO:[0m Benchmark completed and asyncio loop stopped [3m(sharegpt-qa.py:220:__main__)[0m
+[32;20m[2025-05-05 00:15:35,441] INFO:[0m Loaded 55 ShareGPT entries [3m(sharegpt-qa.py:202:__main__)[0m
+[1m[2025-05-05 00:15:35,508] DEBUG:[0m Starting the asyncio loop [3m(utils.py:90:AsyncLoopWrapper)[0m
+[32;20m[2025-05-05 00:15:35,508] INFO:[0m Benchmark started: 55 prompts at 1.34 QPS [3m(sharegpt-qa.py:143:__main__)[0m
+[32;20m[2025-05-05 00:16:15,808] INFO:[0m Waiting for 25 tasks to finish [3m(utils.py:67:AsyncLoopWrapper)[0m
+[32;20m[2025-05-05 00:16:36,403] INFO:[0m All requests completed [3m(sharegpt-qa.py:163:__main__)[0m
+[32;20m[2025-05-05 00:16:36,416] INFO:[0m Results written to /tmp/warmup.csv [3m(sharegpt-qa.py:213:__main__)[0m
+[32;20m[2025-05-05 00:16:36,416] INFO:[0m Completed 55 requests in 60.89s (0.90 QPS) [3m(sharegpt-qa.py:184:__main__)[0m
+[32;20m[2025-05-05 00:16:36,417] INFO:[0m Average TTFT: 0.228s [3m(sharegpt-qa.py:185:__main__)[0m
+[32;20m[2025-05-05 00:16:36,418] INFO:[0m Avg generation speed per req: 14.8 tokens/s [3m(sharegpt-qa.py:186:__main__)[0m
+[32;20m[2025-05-05 00:16:36,418] INFO:[0m Waiting for remaining tasks to finish [3m(utils.py:105:AsyncLoopWrapper)[0m
+[32;20m[2025-05-05 00:16:36,418] INFO:[0m Waiting for 0 tasks to finish [3m(utils.py:67:AsyncLoopWrapper)[0m
+[1m[2025-05-05 00:16:36,418] DEBUG:[0m Stopping the loop! [3m(utils.py:102:AsyncLoopWrapper)[0m
+[32;20m[2025-05-05 00:16:36,418] INFO:[0m Benchmark completed and asyncio loop stopped [3m(sharegpt-qa.py:220:__main__)[0m
+[32;20m[2025-05-05 00:16:47,361] INFO:[0m Loaded 252 ShareGPT entries [3m(sharegpt-qa.py:202:__main__)[0m
+[1m[2025-05-05 00:16:47,427] DEBUG:[0m Starting the asyncio loop [3m(utils.py:90:AsyncLoopWrapper)[0m
+[32;20m[2025-05-05 00:16:47,427] INFO:[0m Benchmark started: 252 prompts at 1.34 QPS [3m(sharegpt-qa.py:143:__main__)[0m
+[32;20m[2025-05-05 00:19:54,743] INFO:[0m Waiting for 15 tasks to finish [3m(utils.py:67:AsyncLoopWrapper)[0m
+[32;20m[2025-05-05 00:20:12,715] INFO:[0m All requests completed [3m(sharegpt-qa.py:163:__main__)[0m
+[32;20m[2025-05-05 00:20:12,723] INFO:[0m Results written to /requests/lmcache-vllm-70b/LMBench_sharegpt_output_1.34.csv [3m(sharegpt-qa.py:213:__main__)[0m
+[32;20m[2025-05-05 00:20:12,723] INFO:[0m Completed 252 requests in 205.29s (1.23 QPS) [3m(sharegpt-qa.py:184:__main__)[0m
+[32;20m[2025-05-05 00:20:12,723] INFO:[0m Average TTFT: 0.239s [3m(sharegpt-qa.py:185:__main__)[0m
+[32;20m[2025-05-05 00:20:12,724] INFO:[0m Avg generation speed per req: 20.8 tokens/s [3m(sharegpt-qa.py:186:__main__)[0m
+[32;20m[2025-05-05 00:20:12,724] INFO:[0m Waiting for remaining tasks to finish [3m(utils.py:105:AsyncLoopWrapper)[0m
+[32;20m[2025-05-05 00:20:12,724] INFO:[0m Waiting for 0 tasks to finish [3m(utils.py:67:AsyncLoopWrapper)[0m
+[1m[2025-05-05 00:20:12,724] DEBUG:[0m Stopping the loop! [3m(utils.py:102:AsyncLoopWrapper)[0m
+[32;20m[2025-05-05 00:20:12,725] INFO:[0m Benchmark completed and asyncio loop stopped [3m(sharegpt-qa.py:220:__main__)[0m

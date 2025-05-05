@@ -1,5 +1,5 @@
 """
-This script runs benchmarking on an existing vllm-d stack deployment using LMBenchmark workload.
+This script runs benchmarking on an existing llm-d stack deployment using LMBenchmark workload.
 Note: When using LMBenchmarkWorkloadSpec, only the repetition parameter is used.
 The duration and number_users parameters are ignored as the workload specification
 controls these through max_requests and max_seconds.
@@ -70,8 +70,8 @@ if __name__ == "__main__":
 
     # Create stack spec for the existing vllm-d deployment
     stack_spec = StackSpec(
-        name="vllm-70b",
-        stack_type="vllm",  # This will automatically set endpoint to vllm-router-service
+        name="lmcache-llm-d-70b",
+        stack_type="llm-d",  # This will automatically set endpoint to vllm-router-service
         refresh_interval=300,  # Refresh model list every 5 minutes
         endpoint_url="llama-3-70b"  # Service name
     )
