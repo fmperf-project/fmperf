@@ -165,3 +165,7 @@ examples/*.json
 
 # VS Code
 .vscode/
+
+logs/
+pod_logs*/
+
