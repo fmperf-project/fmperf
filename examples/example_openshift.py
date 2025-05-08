@@ -1,6 +1,6 @@
 """
 This script runs benchmarking on an existing llm-d stack deployment using LMBenchmark workload.
-Note: When using LMBenchmarkWorkloadSpec, only the repetition parameter is used.
+Note: When using LMBenchmarkWorkload, only the repetition parameter is used.
 The duration and number_users parameters are ignored as the workload specification
 controls these through max_requests and max_seconds.
 """
@@ -60,10 +60,9 @@ if __name__ == "__main__":
     LOCATION: str = "remote"
 
     ## USER Entry: File Location for model workload parameters
-    WORKLOAD_FILE = os.environ.get(
-        "FMPERF_WORKLOAD_FILE",
-        os.path.join(os.path.dirname(__file__), "yamls", "lmbench_llama70b_2replica_H100.yaml")
-    )
+    default_yaml_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), "yamls")
+    yaml_filename = os.environ.get("FMPERF_WORKLOAD_FILE", "lmbench_llama70b_2replica_H100.yaml")
+    WORKLOAD_FILE = os.path.join(default_yaml_dir, yaml_filename)
 
     # Initialize Kubernetes
     cluster, workload_pvc_name = initialize_kubernetes(LOCATION)
