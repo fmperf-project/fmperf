@@ -60,7 +60,7 @@ if __name__ == "__main__":
     LOCATION: str = "remote"
 
     ## USER Entry: File Location for model workload parameters
-    WORKLOAD_FILE = os.path.join(os.path.dirname(__file__), "lmbench_llama70b_openshift.yaml")
+    WORKLOAD_FILE = os.path.join(os.path.dirname(__file__), "lmbench_llama70b_2replicas_H100.yaml")
 
     # Initialize Kubernetes
     cluster, workload_pvc_name = initialize_kubernetes(LOCATION)
@@ -71,10 +71,10 @@ if __name__ == "__main__":
 
     # Create stack spec for the existing vllm-d deployment
     stack_spec = StackSpec(
-        name="llm-d-70b-2replicas-H100",
-        stack_type="llm-d",  # This will automatically set endpoint to vllm-router-service
+        name="vllm-standalone-llama-3-70b-2replicas-H100",
+        stack_type="vllm",  # This will automatically set endpoint to vllm-router-service
         refresh_interval=300,  # Refresh model list every 5 minutes
-        endpoint_url="inference-gateway"  # Service name
+        endpoint_url="vllm-standalone-llama-3-70b"  # Service name
     )
 
     # USER Entry: Experiment variables
