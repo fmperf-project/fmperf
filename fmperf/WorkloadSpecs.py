@@ -295,7 +295,7 @@ class LMBenchmarkWorkload(WorkloadSpec):
     def __init__(
         self,
         model_name: str,
-        base_url: str = "http://localhost:8000",
+        base_url: str = None,
         scenarios: str = "sharegpt",
         qps_values: str = "0.5 0.67 0.84 1 1.17 1.34",  # Default QPS values as space-separated string
         image: str = "lmcache/lmcache-benchmark:latest",
@@ -330,12 +330,15 @@ class LMBenchmarkWorkload(WorkloadSpec):
             model_url = model.url
             folder_name = model.name
         else:
-            model_url = model.get_service_url()
+            # Use base_url from workload config if available, otherwise use model's service URL
+            model_url = self.base_url if self.base_url else model.get_service_url()
+            print(f"LMBenchmarkWorkload.get_env: model_url = {model_url}")
             folder_name = model.name
             
         # Ensure model_url has http:// prefix
         if not model_url.startswith(('http://', 'https://')):
             model_url = f"http://{model_url}"
+            print(f"LMBenchmarkWorkload.get_env: model_url after http prefix = {model_url}")
 
         env = [
             {"name": "MODEL", "value": self.model_name},

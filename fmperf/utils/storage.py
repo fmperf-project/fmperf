@@ -183,7 +183,7 @@ def create_vpc_block_storage(
     namespace: str,
     pvc_name: str = "workload-pvc",
     storage_size: str = "10Gi",
-    storage_class: str = "ibmc-vpc-block-10iops-tier"
+    storage_class: str = None
 ) -> str:
     """
     Create a PersistentVolumeClaim using VPC Block Storage for remote deployments.
@@ -193,18 +193,21 @@ def create_vpc_block_storage(
         namespace: Namespace for the PVC
         pvc_name: Name of the PersistentVolumeClaim
         storage_size: Size of the storage
-        storage_class: Storage class to use (default: ibmc-vpc-block-10iops-tier)
+        storage_class: Storage class to use (default: ibmc-vpc-block-10iops-tier if None or empty)
         
     Returns:
         Name of the created PVC
     """
+    if storage_class is None or storage_class == "":
+        storage_class = "ibmc-vpc-block-10iops-tier"
+        
     pvc = client.V1PersistentVolumeClaim(
         metadata=client.V1ObjectMeta(
             name=pvc_name,
             namespace=namespace
         ),
         spec=client.V1PersistentVolumeClaimSpec(
-            access_modes=["ReadWriteOnce"],  # VPC Block Storage only supports ReadWriteOnce
+            access_modes=["ReadWriteMany"],  # VPC Block Storage only supports ReadWriteOnce
             resources=client.V1ResourceRequirements(
                 requests={"storage": storage_size}
             ),

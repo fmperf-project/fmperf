@@ -74,6 +74,7 @@ class StackSpec:
 
     def get_service_url(self) -> str:
         """Get the service endpoint URL"""
+        print(f"StackSpec.get_service_url: endpoint_url = {self.endpoint_url}")
         return self.endpoint_url
 
     def get_chat_completion_url(self) -> str:

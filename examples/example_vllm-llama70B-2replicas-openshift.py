@@ -33,20 +33,20 @@ def initialize_kubernetes(location):
         )
     elif location == "remote":
         config = client.Configuration()
-        config.host = os.environ.get("OPENSHIFT_HOST")
+        config.host = os.environ.get("LLMDBENCH_OPENSHIFT_HOST")
         config.api_key_prefix["authorization"] = "Bearer"
-        config.api_key["authorization"] = os.environ.get("OPENSHIFT_TOKEN")
+        config.api_key["authorization"] = os.environ.get("LLMDBENCH_OPENSHIFT_TOKEN")
         config.verify_ssl = False
         apiclient = client.ApiClient(config)
         urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
         cluster = Cluster(
-            name="llm", apiclient=apiclient, namespace=os.environ.get("OPENSHIFT_NAMESPACE")
+            name="llm", apiclient=apiclient, namespace=os.environ.get("LLMDBENCH_OPENSHIFT_NAMESPACE")
         )
         
         # Create PVC using VPC Block Storage for remote deployment
         workload_pvc_name = create_vpc_block_storage(
             apiclient=apiclient,
-            namespace=os.environ.get("OPENSHIFT_NAMESPACE")
+            namespace=os.environ.get("LLMDBENCH_OPENSHIFT_NAMESPACE")
         )
     else:
         raise ValueError("Valid choices for model_mode are local and remote")
@@ -70,10 +70,10 @@ if __name__ == "__main__":
 
     # Create stack spec for the existing vllm-d deployment
     stack_spec = StackSpec(
-        name="vllm-70b-2replicas",
+        name="vllm-standalone-llama-3-70b-2replicas",
         stack_type="vllm",  # This will automatically set endpoint to vllm-router-service
         refresh_interval=300,  # Refresh model list every 5 minutes
-        endpoint_url="llama-3-70b"  # Service name
+        endpoint_url="vllm-standalone-llama-3-70b"  # Service name
     )
 
     # USER Entry: Experiment variables

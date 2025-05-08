@@ -1,5 +1,5 @@
 """
-This script runs benchmarking on an existing vllm-d stack deployment using LMBenchmark workload.
+This script runs benchmarking on an existing llm-d stack deployment using LMBenchmark workload.
 Note: When using LMBenchmarkWorkloadSpec, only the repetition parameter is used.
 The duration and number_users parameters are ignored as the workload specification
 controls these through max_requests and max_seconds.
@@ -47,7 +47,7 @@ def initialize_kubernetes(location):
         workload_pvc_name = create_vpc_block_storage(
             apiclient=apiclient,
             namespace=os.environ.get("OPENSHIFT_NAMESPACE"),
-            storage_class=os.environ.get("OPENSHIFT_STORAGECLASS")
+            storage_class=os.environ.get("OPENSHIFT_STORAGECLASS", "nfs-client-pokprod")
         )
     else:
         raise ValueError("Valid choices for model_mode are local and remote")
@@ -60,7 +60,7 @@ if __name__ == "__main__":
     LOCATION: str = "remote"
 
     ## USER Entry: File Location for model workload parameters
-    WORKLOAD_FILE = os.path.join(os.path.dirname(__file__), "lmbench_llama8b_2replicas_spec.yaml")
+    WORKLOAD_FILE = os.path.join(os.path.dirname(__file__), "lmbench_llama70b_openshift.yaml")
 
     # Initialize Kubernetes
     cluster, workload_pvc_name = initialize_kubernetes(LOCATION)
@@ -71,10 +71,10 @@ if __name__ == "__main__":
 
     # Create stack spec for the existing vllm-d deployment
     stack_spec = StackSpec(
-        name="llm-d-llama3-70B-2replica-H100",
-        stack_type="llm-d",  # This will automatically set endpoint to vllm-router-service
+        name="vllm-standalone-llama-3-70b-2replicas",
+        stack_type="vllm",  # This will automatically set endpoint to vllm-router-service
         refresh_interval=300,  # Refresh model list every 5 minutes
-        endpoint_url="inference-gateway"  # Service name
+        endpoint_url="vllm-standalone-llama-3-70b"  # Service name
     )
 
     # USER Entry: Experiment variables
