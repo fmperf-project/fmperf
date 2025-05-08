@@ -16,6 +16,8 @@ from fmperf.WorkloadSpecs import (
     WorkloadSpec,
     GuideLLMWorkloadSpec,
     LMBenchmarkWorkload,
+    HomogeneousWorkloadSpec,
+    HeterogeneousWorkloadSpec,
 )
 
 
@@ -531,6 +533,10 @@ class Cluster:
             self.namespace, manifest
         )
 
+        # Create logs directory if it doesn't exist
+        logs_dir = os.path.join(os.getcwd(), "logs")
+        os.makedirs(logs_dir, exist_ok=True)
+
         # Start logging pod logs from other deployed stacks
         logs_script = os.path.join(os.path.dirname(os.path.dirname(__file__)), "scripts", "logs.sh")
         if os.path.exists(logs_script):
@@ -574,29 +580,29 @@ class Cluster:
 
         pod_name = pods_list.items[0].metadata.name
 
-        pod_log_response = client.CoreV1Api(self.apiclient).read_namespaced_pod_log(
-            name=pod_name, namespace=self.namespace
-        )
-        
-        # Create logs directory if it doesn't exist
-        logs_dir = os.path.join(os.getcwd(), "logs")
-        os.makedirs(logs_dir, exist_ok=True)
-        
-        # Write pod log response to file with job name
-        log_file = os.path.join(logs_dir, f"{job_name}_logs.txt")
-        with open(log_file, "w") as f:
-            f.write(pod_log_response)
+        # Process performance and energy data only for HomogeneousWorkloadSpec and HeterogeneousWorkloadSpec
+        if isinstance(workload.spec, (HomogeneousWorkloadSpec, HeterogeneousWorkloadSpec)):
+            # Read the pod logs from the file that was being written in the background
+            log_file = os.path.join(logs_dir, job_name, f"{pod_name}.txt")
+            try:
+                with open(log_file, "r") as f:
+                    pod_log_response = f.read()
+            except Exception as e:
+                self.logger.warning(f"Failed to read pod logs from file: {e}")
+                # Fallback to reading directly from the pod if file reading fails
+                pod_log_response = client.CoreV1Api(self.apiclient).read_namespaced_pod_log(
+                    name=pod_name, namespace=self.namespace
+                )
 
-        
-
-        trimmed_response = pod_log_response.split("\n")[-1]
-
-        try:
-            out = json.loads(trimmed_response)
-            perf_out, energy_out = out["results"], out["energy"]
-        except Exception as e:
-            print("Failed to parse logs [check pod_log_responses.txt]")
-            print(e)
+            trimmed_response = pod_log_response.split("\n")[-1]
+            try:
+                out = json.loads(trimmed_response)
+                perf_out, energy_out = out["results"], out["energy"]
+            except Exception as e:
+                print("Failed to parse logs [check pod_log_responses.txt]")
+                print(e)
+                perf_out, energy_out = None, None
+        else:
             perf_out, energy_out = None, None
 
         deleting.delete_namespaced_job(job_name, self.namespace)

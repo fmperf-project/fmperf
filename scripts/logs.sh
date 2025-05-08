@@ -34,8 +34,12 @@ PODS=()
 RUN_IN_BACKGROUND=false
 JOB_NAME=""
 
-# Create log directory with timestamp first
-LOG_DIR="${LOG_DIR_PREFIX}/pod_logs_$(date +%Y%m%d_%H%M%S)"
+# Create log directory with job name
+if [ -n "$JOB_NAME" ]; then
+  LOG_DIR="${LOG_DIR_PREFIX}/${JOB_NAME}"
+else
+  LOG_DIR="${LOG_DIR_PREFIX}/pod_logs_$(date +%Y%m%d_%H%M%S)"
+fi
 PID_FILE="${LOG_DIR}/.pid"
 mkdir -p "$LOG_DIR"
 
@@ -97,6 +101,33 @@ if [ ${#PODS[@]} -eq 0 ]; then
     PODS+=("${endpoint_pods[@]}")
   else
     echo "Warning: No endpoint-picker pods found"
+  fi
+
+  # Add the job's pod and wait for it to start
+  if [ -n "$JOB_NAME" ]; then
+    echo "Waiting for job pod to start (timeout: 60s)..."
+    start_time=$(date +%s)
+    timeout=60
+    job_pod=""
+    
+    while [ $(($(date +%s) - start_time)) -lt $timeout ]; do
+      job_pods=($(oc get pods -l job-name=$JOB_NAME -o jsonpath='{.items[*].metadata.name}'))
+      if [ ${#job_pods[@]} -gt 0 ]; then
+        job_pod="${job_pods[0]}"
+        pod_status=$(oc get pod $job_pod -o jsonpath='{.status.phase}')
+        if [ "$pod_status" = "Running" ]; then
+          echo "Job pod $job_pod is running"
+          PODS+=("$job_pod")
+          break
+        fi
+      fi
+      sleep 5
+    done
+    
+    if [ -z "$job_pod" ]; then
+      echo "Timeout waiting for job pod to start after 60 seconds"
+      exit 1
+    fi
   fi
 fi
 
