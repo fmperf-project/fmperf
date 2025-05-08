@@ -531,6 +531,30 @@ class Cluster:
             self.namespace, manifest
         )
 
+        # Start logging pod logs from other deployed stacks
+        logs_script = os.path.join(os.path.dirname(os.path.dirname(__file__)), "scripts", "logs.sh")
+        if os.path.exists(logs_script):
+            import subprocess
+            try:
+                # Get label key and value from environment variables with defaults
+                label_key = os.environ.get("FMPERF_LABEL_KEY", "app")
+                label_value = os.environ.get("FMPERF_LABEL_VALUE", "vllm-llama-3-70b")
+                
+                # Start logs.sh in background with job name and labels
+                subprocess.Popen(
+                    [
+                        logs_script,
+                        f"--job={job_name}",
+                        f"--label-key={label_key}",
+                        f"--label-value={label_value}",
+                        "--background"
+                    ],
+                    stdout=subprocess.DEVNULL,
+                    stderr=subprocess.DEVNULL
+                )
+            except Exception as e:
+                self.logger.warning(f"Failed to start pod logging: {e}")
+
         waiting = Waiting(self.apigetter, self.logger)
         deleting = Deleting(self.apigetter, self.logger)
 
@@ -553,8 +577,17 @@ class Cluster:
         pod_log_response = client.CoreV1Api(self.apiclient).read_namespaced_pod_log(
             name=pod_name, namespace=self.namespace
         )
-        with open("pod_log_response.txt", "w") as f:
+        
+        # Create logs directory if it doesn't exist
+        logs_dir = os.path.join(os.getcwd(), "logs")
+        os.makedirs(logs_dir, exist_ok=True)
+        
+        # Write pod log response to file with job name
+        log_file = os.path.join(logs_dir, f"{job_name}_logs.txt")
+        with open(log_file, "w") as f:
             f.write(pod_log_response)
+
+        
 
         trimmed_response = pod_log_response.split("\n")[-1]
 

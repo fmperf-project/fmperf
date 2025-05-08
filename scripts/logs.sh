@@ -150,6 +150,31 @@ check_job_complete() {
   return 1
 }
 
+# Function to check if job has errors
+check_job_error() {
+  if [ -z "$JOB_NAME" ]; then
+    return 1
+  fi
+  
+  local job_status=$(oc get job "$JOB_NAME" -o jsonpath='{.status.conditions[?(@.type=="Failed")].status}')
+  if [ "$job_status" = "True" ]; then
+    return 0
+  fi
+  return 1
+}
+
+# Function to check if job exists
+check_job_exists() {
+  if [ -z "$JOB_NAME" ]; then
+    return 0
+  fi
+  
+  if oc get job "$JOB_NAME" &>/dev/null; then
+    return 0
+  fi
+  return 1
+}
+
 # Main logging function
 main() {
   # Create log directory
@@ -173,6 +198,18 @@ main() {
 
   # Main loop
   while true; do
+    # Check if job exists
+    if ! check_job_exists; then
+      echo "Job $JOB_NAME was deleted at $(date)" >> "$LOG_DIR/status.log"
+      break
+    fi
+
+    # Check if job has errors
+    if check_job_error; then
+      echo "Job $JOB_NAME failed at $(date)" >> "$LOG_DIR/status.log"
+      break
+    fi
+
     # Check if job is complete
     if ! $job_complete && check_job_complete; then
       job_complete=true
