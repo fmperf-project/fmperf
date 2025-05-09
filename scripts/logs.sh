@@ -8,6 +8,9 @@ EXCLUDE_PATTERNS=(                   # Patterns to exclude from logs
   "GET /metrics HTTP/1.1"
 )
 
+# Initialize last capture times associative array
+declare -A last_capture_times
+
 # Detect platform for date command
 PLATFORM=$(uname)
 if [ "$PLATFORM" = "Darwin" ]; then
@@ -148,8 +151,17 @@ get_filtered_logs() {
   local pod=$1
   local log_file="$LOG_DIR/${pod}.log"
   
+  # Get current timestamp in RFC3339 format
+  local current_time=$(date -u +"%Y-%m-%dT%H:%M:%SZ")
+  
   # Start building the command
-  cmd="oc logs $pod --since=30s"
+  if [ -z "${last_capture_times[$pod]}" ]; then
+    # First time capturing logs for this pod, use 30s ago
+    cmd="oc logs $pod --since=30s"
+  else
+    # Use the last capture time
+    cmd="oc logs $pod --since-time=${last_capture_times[$pod]}"
+  fi
   
   # Add grep exclusions if any
   for pattern in "${EXCLUDE_PATTERNS[@]}"; do
@@ -162,8 +174,9 @@ get_filtered_logs() {
   # Execute the command
   eval "$cmd"
   
-  # If log is not empty, print a message
+  # If log is not empty, update the last capture time
   if [ -s "$log_file" ]; then
+    last_capture_times[$pod]=$current_time
     echo "[$(date +%H:%M:%S)] New logs captured for $pod" >> "$LOG_DIR/status.log"
   fi
 }
