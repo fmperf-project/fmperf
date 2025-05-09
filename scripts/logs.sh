@@ -8,17 +8,19 @@ EXCLUDE_PATTERNS=(                   # Patterns to exclude from logs
   "GET /metrics HTTP/1.1"
 )
 
-# Initialize last capture times associative array
-declare -A last_capture_times
-
-# Detect platform for date command
+# Detect platform for date command and array support
 PLATFORM=$(uname)
 if [ "$PLATFORM" = "Darwin" ]; then
-  # macOS
+  # macOS - use file-based approach
   DATE_READABLE_CMD="date -r"
+  LAST_CAPTURE_DIR=".last_capture"
+  USE_FILE_BASED_CAPTURE=true
 elif [ "$PLATFORM" = "Linux" ]; then
-  # Linux
+  # Linux - use associative array
   DATE_READABLE_CMD="date -d @"
+  USE_FILE_BASED_CAPTURE=false
+  # Initialize last capture times associative array
+  declare -A last_capture_times
 else
   echo "Unsupported platform: $PLATFORM"
   exit 1
@@ -155,12 +157,26 @@ get_filtered_logs() {
   local current_time=$(date -u +"%Y-%m-%dT%H:%M:%SZ")
   
   # Start building the command
-  if [ -z "${last_capture_times[$pod]}" ]; then
-    # First time capturing logs for this pod, use 30s ago
-    cmd="oc logs $pod --since=30s"
+  if [ "$USE_FILE_BASED_CAPTURE" = true ]; then
+    # macOS file-based approach
+    local last_capture_file="$LOG_DIR/$LAST_CAPTURE_DIR/${pod}.last"
+    if [ ! -f "$last_capture_file" ]; then
+      # First time capturing logs for this pod, use 30s ago
+      cmd="oc logs $pod --since=30s"
+    else
+      # Use the last capture time
+      local last_time=$(cat "$last_capture_file")
+      cmd="oc logs $pod --since-time=$last_time"
+    fi
   else
-    # Use the last capture time
-    cmd="oc logs $pod --since-time=${last_capture_times[$pod]}"
+    # Linux associative array approach
+    if [ -z "${last_capture_times[$pod]}" ]; then
+      # First time capturing logs for this pod, use 30s ago
+      cmd="oc logs $pod --since=30s"
+    else
+      # Use the last capture time
+      cmd="oc logs $pod --since-time=${last_capture_times[$pod]}"
+    fi
   fi
   
   # Add grep exclusions if any
@@ -176,7 +192,13 @@ get_filtered_logs() {
   
   # If log is not empty, update the last capture time
   if [ -s "$log_file" ]; then
-    last_capture_times[$pod]=$current_time
+    if [ "$USE_FILE_BASED_CAPTURE" = true ]; then
+      # macOS file-based approach
+      echo "$current_time" > "$last_capture_file"
+    else
+      # Linux associative array approach
+      last_capture_times[$pod]=$current_time
+    fi
     echo "[$(date +%H:%M:%S)] New logs captured for $pod" >> "$LOG_DIR/status.log"
   fi
 }
@@ -221,8 +243,11 @@ check_job_exists() {
 
 # Main logging function
 main() {
-  # Create log directory
+  # Create log directory and last capture directory if needed
   mkdir -p "$LOG_DIR"
+  if [ "$USE_FILE_BASED_CAPTURE" = true ]; then
+    mkdir -p "$LOG_DIR/$LAST_CAPTURE_DIR"
+  fi
   echo "Logs will be saved to $LOG_DIR"
   if [ -n "$JOB_NAME" ]; then
     echo "Monitoring job: $JOB_NAME"
