@@ -81,9 +81,9 @@ oc wait --for=condition=Ready pod/$POD_NAME -n $NAMESPACE
 # Use rsync to copy files, excluding hf_cache and lost+found
 echo "Syncing files from PVC to $LOCAL_DIR..."
 if [ -z "$SOURCE_DIR" ]; then
-    oc rsync $POD_NAME:$MOUNT_PATH/ "$LOCAL_DIR" -n $NAMESPACE --exclude="hf_cache" --exclude="lost+found"
+    oc rsync $POD_NAME:$MOUNT_PATH/ "$LOCAL_DIR" -n $NAMESPACE --exclude="hf_cache" --exclude="vllm" --exclude="lost+found"
 else
-    oc rsync $POD_NAME:$MOUNT_PATH/$SOURCE_DIR/ "$LOCAL_DIR" -n $NAMESPACE --exclude="hf_cache" --exclude="lost+found"
+    oc rsync $POD_NAME:$MOUNT_PATH/$SOURCE_DIR/ "$LOCAL_DIR" -n $NAMESPACE --exclude="hf_cache" --exclude="vllm" --exclude="lost+found"
 fi
 
 # Clean up the temporary pod
