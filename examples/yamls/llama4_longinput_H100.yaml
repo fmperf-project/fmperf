@@ -2,7 +2,7 @@
 # This specification is used for running benchmarks with the LMBenchmark container
 model_name: "RedHatAI/Llama-4-Scout-17B-16E-Instruct-FP8-dynamic"  # Model identifier
 scenarios: "long-input"  # Scenarios to run (all, or sharegpt, long-input, short-input)
-qps_values: "0.2 0.4 0.6 0.8 1 1.2 1.4 1.6 1.8 2 2.2 2.4 2.6 2.8 3 3.2 3.4 3.6 3.8 4"  # Space-separated list of QPS values to test
+qps_values: "0.1 0.25 0.5 1 2 3 4 5 7.5 10 15 20"  # Space-separated list of QPS values to test
 image: "quay.io/chenw615/lmbenchmark:latest"  # Container image to use
 service_account: "default"  # Service account to use for the job 
 # New benchmark configuration parameters
