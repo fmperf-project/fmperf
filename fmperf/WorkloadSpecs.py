@@ -21,9 +21,7 @@ class WorkloadSpec:
 
     @classmethod
     def from_yaml(cls, file: str):
-        """
-        The function processes the yaml file to create workload specs
-        """
+        """Process the yaml file to create workload specs."""
         with open(file, "r") as f:
             data = yaml.safe_load(f)
         return cls(**data)
@@ -38,7 +36,11 @@ class WorkloadSpec:
             model_id = model.spec.name
             model_url = model.url
         else:
-            model_id = self.model_name if hasattr(self, 'model_name') else model.get_available_models()[0]
+            model_id = (
+                self.model_name
+                if hasattr(self, "model_name")
+                else model.get_available_models()[0]
+            )
             model_url = model.get_service_url()
 
         env = [
@@ -60,13 +62,18 @@ class WorkloadSpec:
             {"name": "WORKLOAD_DIR", "value": "/requests"},
             {"name": "HF_HOME", "value": "/tmp/hf_cache"},
         ]
-        
+
         # Add Hugging Face token if available in the environment
-        hf_token = os.environ.get("HF_TOKEN") or os.environ.get("HUGGINGFACE_TOKEN") or os.environ.get("hf_token") or os.environ.get("huggingface_token")
+        hf_token = (
+            os.environ.get("HF_TOKEN")
+            or os.environ.get("HUGGINGFACE_TOKEN")
+            or os.environ.get("hf_token")
+            or os.environ.get("huggingface_token")
+        )
         if hf_token:
             env.append({"name": "HUGGINGFACE_TOKEN", "value": hf_token})
             env.append({"name": "HF_TOKEN", "value": hf_token})
-            
+
         return env
 
 
@@ -124,10 +131,12 @@ class HomogeneousWorkloadSpec(WorkloadSpec):
             },
         ]
         if self.model_name:
-            env.append({
-                "name": "MODEL_NAME",
-                "value": self.model_name,
-            })
+            env.append(
+                {
+                    "name": "MODEL_NAME",
+                    "value": self.model_name,
+                }
+            )
         return env
 
 
@@ -189,10 +198,12 @@ class HeterogeneousWorkloadSpec(WorkloadSpec):
             },
         ]
         if self.model_name:
-            env.append({
-                "name": "MODEL_NAME",
-                "value": self.model_name,
-            })
+            env.append(
+                {
+                    "name": "MODEL_NAME",
+                    "value": self.model_name,
+                }
+            )
         return env
 
 
