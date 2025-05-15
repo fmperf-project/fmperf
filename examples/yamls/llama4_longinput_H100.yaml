@@ -13,4 +13,4 @@ system_prompt: 1000     # System prompt token length
 chat_history:  8000     # Chat history token length
 answer_len: 100         # Answer length in tokens
 init_user_id: 1         # Initial user ID
-test_duration: 100      # Test duration in seconds 
+test_duration: 600      # Test duration in seconds 
