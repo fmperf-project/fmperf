@@ -303,6 +303,15 @@ class LMBenchmarkWorkload(WorkloadSpec):
         overwrite: bool = False,
         service_account: str = None,
         chat_template: str = None,
+        # New benchmark configuration parameters
+        num_users_warmup: int = 20,
+        num_users: int = 15,
+        num_rounds: int = 20,
+        system_prompt: int = 1000,
+        chat_history: int = 20000,
+        answer_len: int = 100,
+        init_user_id: int = 1,
+        test_duration: int = 100,
     ):
         self.model_name = model_name
         self.base_url = base_url
@@ -310,6 +319,15 @@ class LMBenchmarkWorkload(WorkloadSpec):
         self.qps_values = qps_values
         self.service_account = service_account
         self.chat_template = chat_template
+        # New benchmark parameters
+        self.num_users_warmup = num_users_warmup
+        self.num_users = num_users
+        self.num_rounds = num_rounds
+        self.system_prompt = system_prompt
+        self.chat_history = chat_history
+        self.answer_len = answer_len
+        self.init_user_id = init_user_id
+        self.test_duration = test_duration
         super().__init__(1, image, pvc_name, overwrite)
 
     @classmethod
@@ -345,13 +363,23 @@ class LMBenchmarkWorkload(WorkloadSpec):
             {"name": "BASE_URL", "value": model_url},
             {"name": "SAVE_FILE_KEY", "value": f"/requests/{folder_name}/LMBench"},
             {"name": "SCENARIOS", "value": self.scenarios},
+            # New benchmark configuration variables
+            {"name": "NUM_USERS_WARMUP", "value": str(self.num_users_warmup)},
+            {"name": "NUM_USERS", "value": str(self.num_users)},
+            {"name": "NUM_ROUNDS", "value": str(self.num_rounds)},
+            {"name": "SYSTEM_PROMPT", "value": str(self.system_prompt)},
+            {"name": "CHAT_HISTORY", "value": str(self.chat_history)},
+            {"name": "ANSWER_LEN", "value": str(self.answer_len)},
+            {"name": "INIT_USER_ID", "value": str(self.init_user_id)},
+            {"name": "TEST_DURATION", "value": str(self.test_duration)},
         ]
         
-        # Split QPS values and add them as individual environment variables
+        # Add individual QPS values as separate parameters
         qps_values = self.qps_values.split()
         for i, qps in enumerate(qps_values):
             env.append({"name": f"QPS_VALUES_{i}", "value": qps})
         
+        # Add chat template if provided
         if self.chat_template:
             # Pass chat template as a JSON string to be parsed by the script
             env.append({

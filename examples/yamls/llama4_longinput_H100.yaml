@@ -3,5 +3,14 @@
 model_name: "RedHatAI/Llama-4-Scout-17B-16E-Instruct-FP8-dynamic"  # Model identifier
 scenarios: "long-input"  # Scenarios to run (all, or sharegpt, long-input, short-input)
 qps_values: "0.2 0.4 0.6 0.8 1 1.2 1.4 1.6 1.8 2 2.2 2.4 2.6 2.8 3 3.2 3.4 3.6 3.8 4"  # Space-separated list of QPS values to test
-image: "quay.io/mimehta/lmbenchmark:longshortconfig"  # Container image to use
+image: "quay.io/chenw615/lmbenchmark:latest"  # Container image to use
 service_account: "default"  # Service account to use for the job 
+# New benchmark configuration parameters
+num_users_warmup: 20    # Number of users for warmup phase
+num_users: 15           # Number of concurrent users for testing
+num_rounds: 20          # Number of rounds to run the benchmark
+system_prompt: 1000     # System prompt token length
+chat_history:  8000     # Chat history token length
+answer_len: 100         # Answer length in tokens
+init_user_id: 1         # Initial user ID
+test_duration: 100      # Test duration in seconds 
