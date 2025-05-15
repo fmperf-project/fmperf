@@ -238,11 +238,15 @@ class Cluster:
         elif isinstance(model, StackSpec):
             target = "vllm"  # StackSpec always uses vLLM API
             model_spec = model
-            model_name = workload.model_name if hasattr(workload, 'model_name') else model.get_available_models()[0]
+            model_name = (
+                workload.model_name
+                if hasattr(workload, "model_name")
+                else model.get_available_models()[0]
+            )
             model_url = model.get_service_url()
         else:
             raise TypeError("model must be either DeployedModel or StackSpec")
-        
+
         """Generate workload for a model deployment."""
         if isinstance(workload, GuideLLMWorkloadSpec):
             # For GuideLLMWorkloadSpec, just return the workload directly
@@ -392,7 +396,11 @@ class Cluster:
             model_name = model.spec.name
             model_url = model.url
         elif isinstance(model, StackSpec):
-            model_name = workload.spec.model_name if hasattr(workload.spec, 'model_name') else model.get_available_models()[0]
+            model_name = (
+                workload.spec.model_name
+                if hasattr(workload.spec, "model_name")
+                else model.get_available_models()[0]
+            )
             model_url = model.get_service_url()
         else:
             raise TypeError("model must be either DeployedModel or StackSpec")
@@ -403,43 +411,63 @@ class Cluster:
             job_name = f"guidellm-evaluate{'-'+id if id else ''}"
             # Add OUTPUT_PATH based on the volume mount and job name
             env.append({"name": "OUTPUT_PATH", "value": f"/requests/{job_name}"})
-            
+
             # Add Hugging Face cache environment variables
-            env.extend([
-                {"name": "TRANSFORMERS_CACHE", "value": "/requests/hf_cache"},
-                {"name": "HF_HOME", "value": "/requests/hf_cache"},
-                {"name": "HF_DATASETS_CACHE", "value": "/requests/hf_cache/datasets"}
-            ])
-            
+            env.extend(
+                [
+                    {"name": "TRANSFORMERS_CACHE", "value": "/requests/hf_cache"},
+                    {"name": "HF_HOME", "value": "/requests/hf_cache"},
+                    {
+                        "name": "HF_DATASETS_CACHE",
+                        "value": "/requests/hf_cache/datasets",
+                    },
+                ]
+            )
+
             # Add HF_TOKEN from host environment if available
-            hf_token = os.environ.get("HF_TOKEN") or os.environ.get("HUGGINGFACE_TOKEN") or os.environ.get("hf_token") or os.environ.get("huggingface_token")
+            hf_token = (
+                os.environ.get("HF_TOKEN")
+                or os.environ.get("HUGGINGFACE_TOKEN")
+                or os.environ.get("hf_token")
+                or os.environ.get("huggingface_token")
+            )
             if hf_token:
                 env.append({"name": "HF_TOKEN", "value": hf_token})
-                
+
             container_name = "guidellm-benchmark"
             container_args = []  # Use default entrypoint
         elif isinstance(workload.spec, LMBenchmarkWorkload):
             # Use the environment variables from LMBenchmarkWorkload
             env = workload.spec.get_env(target, model, workload.file)
             job_name = f"lmbenchmark-evaluate{'-'+id if id else ''}"
-            
+
             # Add Hugging Face cache environment variables
-            env.extend([
-                {"name": "TRANSFORMERS_CACHE", "value": "/requests/hf_cache"},
-                {"name": "HF_HOME", "value": "/requests/hf_cache"},
-                {"name": "HF_DATASETS_CACHE", "value": "/requests/hf_cache/datasets"}
-            ])
-            
+            env.extend(
+                [
+                    {"name": "TRANSFORMERS_CACHE", "value": "/requests/hf_cache"},
+                    {"name": "HF_HOME", "value": "/requests/hf_cache"},
+                    {
+                        "name": "HF_DATASETS_CACHE",
+                        "value": "/requests/hf_cache/datasets",
+                    },
+                ]
+            )
+
             # Add HF_TOKEN from host environment if available
-            hf_token = os.environ.get("HF_TOKEN") or os.environ.get("HUGGINGFACE_TOKEN") or os.environ.get("hf_token") or os.environ.get("huggingface_token")
+            hf_token = (
+                os.environ.get("HF_TOKEN")
+                or os.environ.get("HUGGINGFACE_TOKEN")
+                or os.environ.get("hf_token")
+                or os.environ.get("huggingface_token")
+            )
             if hf_token:
                 env.append({"name": "HF_TOKEN", "value": hf_token})
-                
+
             container_name = "lmbenchmark"
             container_args = [
                 "QPS_VALUES=($(env | grep QPS_VALUES_ | sort -V | cut -d= -f2)); "
                 ". ~/.bashrc && . .venv/bin/activate && "
-                "/app/run_benchmarks.sh \"$MODEL\" \"$BASE_URL\" \"$SAVE_FILE_KEY\" \"$SCENARIOS\" \"${QPS_VALUES[@]}\""
+                '/app/run_benchmarks.sh "$MODEL" "$BASE_URL" "$SAVE_FILE_KEY" "$SCENARIOS" "${QPS_VALUES[@]}"'
             ]
         else:
             env = [
@@ -477,7 +505,9 @@ class Cluster:
 
             job_name = f"fmperf-evaluate{'-'+id if id else ''}"
             container_name = "fmaas-perf"
-            container_args = [f"python -m fmperf.loadgen.run; cat /requests/fmperf-results-{id}.json"]
+            container_args = [
+                f"python -m fmperf.loadgen.run; cat /requests/fmperf-results-{id}.json"
+            ]
 
         manifest = {
             "apiVersion": "batch/v1",
@@ -489,19 +519,21 @@ class Cluster:
             "spec": {
                 "template": {
                     "spec": {
-                        "serviceAccountName": workload.spec.service_account or "vllm-router-service-account",
+                        "serviceAccountName": workload.spec.service_account
+                        or "vllm-router-service-account",
                         "initContainers": [
                             {
                                 "name": "init-cache-dirs",
                                 "image": "busybox",
-                                "command": ["sh", "-c", "mkdir -p /requests/hf_cache/datasets && FOLDER_NAME=$(echo $SAVE_FILE_KEY | sed 's|/requests/||' | sed 's|/LMBench||') && mkdir -p /requests/$FOLDER_NAME && chmod -R 777 /requests && ls -la /requests"],
-                                "volumeMounts": [
-                                    {
-                                        "name": "requests",
-                                        "mountPath": "/requests"
-                                    }
+                                "command": [
+                                    "sh",
+                                    "-c",
+                                    "mkdir -p /requests/hf_cache/datasets && FOLDER_NAME=$(echo $SAVE_FILE_KEY | sed 's|/requests/||' | sed 's|/LMBench||') && mkdir -p /requests/$FOLDER_NAME && chmod -R 777 /requests && ls -la /requests",
                                 ],
-                                "env": env
+                                "volumeMounts": [
+                                    {"name": "requests", "mountPath": "/requests"}
+                                ],
+                                "env": env,
                             }
                         ],
                         "containers": [
@@ -510,19 +542,19 @@ class Cluster:
                                 "imagePullPolicy": "Always",
                                 "image": workload.spec.image,
                                 "env": env,
-                                "command": ["/bin/bash", "-ce"] if container_args else None,
+                                "command": (
+                                    ["/bin/bash", "-ce"] if container_args else None
+                                ),
                                 "args": container_args,
                                 "volumeMounts": volume_mounts,
                                 "securityContext": {
                                     "allowPrivilegeEscalation": False,
-                                    "capabilities": {
-                                        "drop": ["ALL"]
-                                    }
-                                }
+                                    "capabilities": {"drop": ["ALL"]},
+                                },
                             }
                         ],
                         "restartPolicy": "Never",
-                        "volumes": volumes
+                        "volumes": volumes,
                     }
                 },
                 "backoffLimit": 0,
@@ -538,14 +570,17 @@ class Cluster:
         os.makedirs(logs_dir, exist_ok=True)
 
         # Start logging pod logs from other deployed stacks
-        logs_script = os.path.join(os.path.dirname(os.path.dirname(__file__)), "scripts", "logs.sh")
+        logs_script = os.path.join(
+            os.path.dirname(os.path.dirname(__file__)), "scripts", "logs.sh"
+        )
         if os.path.exists(logs_script):
             import subprocess
+
             try:
                 # Get label key and value from environment variables with defaults
                 label_key = os.environ.get("FMPERF_LABEL_KEY", "app")
                 label_value = os.environ.get("FMPERF_LABEL_VALUE", "vllm-llama-3-70b")
-                
+
                 # Start logs.sh in background with job name and labels
                 subprocess.Popen(
                     [
@@ -553,10 +588,10 @@ class Cluster:
                         f"--job={job_name}",
                         f"--label-key={label_key}",
                         f"--label-value={label_value}",
-                        "--background"
+                        "--background",
                     ],
                     stdout=subprocess.DEVNULL,
-                    stderr=subprocess.DEVNULL
+                    stderr=subprocess.DEVNULL,
                 )
             except Exception as e:
                 self.logger.warning(f"Failed to start pod logging: {e}")
@@ -581,7 +616,9 @@ class Cluster:
         pod_name = pods_list.items[0].metadata.name
 
         # Process performance and energy data only for HomogeneousWorkloadSpec and HeterogeneousWorkloadSpec
-        if isinstance(workload.spec, (HomogeneousWorkloadSpec, HeterogeneousWorkloadSpec)):
+        if isinstance(
+            workload.spec, (HomogeneousWorkloadSpec, HeterogeneousWorkloadSpec)
+        ):
             # Read the pod logs from the file that was being written in the background
             log_file = os.path.join(logs_dir, job_name, f"{pod_name}.txt")
             try:
@@ -590,9 +627,9 @@ class Cluster:
             except Exception as e:
                 self.logger.warning(f"Failed to read pod logs from file: {e}")
                 # Fallback to reading directly from the pod if file reading fails
-                pod_log_response = client.CoreV1Api(self.apiclient).read_namespaced_pod_log(
-                    name=pod_name, namespace=self.namespace
-                )
+                pod_log_response = client.CoreV1Api(
+                    self.apiclient
+                ).read_namespaced_pod_log(name=pod_name, namespace=self.namespace)
 
             trimmed_response = pod_log_response.split("\n")[-1]
             try:

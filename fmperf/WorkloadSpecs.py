@@ -270,21 +270,24 @@ class GuideLLMWorkloadSpec(WorkloadSpec):
             model_url = model.url
         else:
             model_url = model.get_service_url()
-            
+
         # Ensure model_url has http:// prefix
-        if not model_url.startswith(('http://', 'https://')):
+        if not model_url.startswith(("http://", "https://")):
             model_url = f"http://{model_url}"
 
         env = [
             {"name": "TARGET", "value": model_url},
             {"name": "MODEL", "value": self.model_name},
             {"name": "RATE_TYPE", "value": self.rate_type},
-            {"name": "DATA", "value": f"prompt_tokens={self.prompt_tokens},output_tokens={self.output_tokens}"},
+            {
+                "name": "DATA",
+                "value": f"prompt_tokens={self.prompt_tokens},output_tokens={self.output_tokens}",
+            },
             {"name": "MAX_REQUESTS", "value": str(self.max_requests)},
             {"name": "MAX_SECONDS", "value": str(self.max_seconds)},
             {"name": "OUTPUT_FORMAT", "value": self.output_format},
         ]
-        
+
         # Add Hugging Face token if available
         print("Checking for HF_TOKEN...")
         print(f"self.hf_token: {self.hf_token}")
@@ -292,15 +295,22 @@ class GuideLLMWorkloadSpec(WorkloadSpec):
         print(f"HUGGINGFACE_TOKEN env: {os.environ.get('HUGGINGFACE_TOKEN')}")
         print(f"hf_token env: {os.environ.get('hf_token')}")
         print(f"huggingface_token env: {os.environ.get('huggingface_token')}")
-        
-        hf_token = self.hf_token or os.environ.get("HF_TOKEN") or os.environ.get("HUGGINGFACE_TOKEN") or os.environ.get("hf_token") or os.environ.get("huggingface_token")
+
+        hf_token = (
+            self.hf_token
+            or os.environ.get("HF_TOKEN")
+            or os.environ.get("HUGGINGFACE_TOKEN")
+            or os.environ.get("hf_token")
+            or os.environ.get("huggingface_token")
+        )
         if hf_token:
             print(f"Found HF_TOKEN: {hf_token}")
             env.append({"name": "HF_TOKEN", "value": hf_token})
         else:
             print("No HF_TOKEN found!")
-            
+
         return env
+
 
 class LMBenchmarkWorkload(WorkloadSpec):
     def __init__(
@@ -363,11 +373,13 @@ class LMBenchmarkWorkload(WorkloadSpec):
             model_url = self.base_url if self.base_url else model.get_service_url()
             print(f"LMBenchmarkWorkload.get_env: model_url = {model_url}")
             folder_name = model.name
-            
+
         # Ensure model_url has http:// prefix
-        if not model_url.startswith(('http://', 'https://')):
+        if not model_url.startswith(("http://", "https://")):
             model_url = f"http://{model_url}"
-            print(f"LMBenchmarkWorkload.get_env: model_url after http prefix = {model_url}")
+            print(
+                f"LMBenchmarkWorkload.get_env: model_url after http prefix = {model_url}"
+            )
 
         env = [
             {"name": "MODEL", "value": self.model_name},
@@ -384,22 +396,22 @@ class LMBenchmarkWorkload(WorkloadSpec):
             {"name": "INIT_USER_ID", "value": str(self.init_user_id)},
             {"name": "TEST_DURATION", "value": str(self.test_duration)},
         ]
-        
+
         # Add individual QPS values as separate parameters
         qps_values = self.qps_values.split()
         for i, qps in enumerate(qps_values):
             env.append({"name": f"QPS_VALUES_{i}", "value": qps})
-        
+
         # Add chat template if provided
         if self.chat_template:
             # Pass chat template as a JSON string to be parsed by the script
-            env.append({
-                "name": "CHAT_TEMPLATE",
-                "value": json.dumps({
-                    "template": self.chat_template,
-                    "use_template": True
-                })
-            })
-            
-        return env
+            env.append(
+                {
+                    "name": "CHAT_TEMPLATE",
+                    "value": json.dumps(
+                        {"template": self.chat_template, "use_template": True}
+                    ),
+                }
+            )
 
+        return env

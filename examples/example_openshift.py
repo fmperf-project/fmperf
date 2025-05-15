@@ -24,12 +24,12 @@ def initialize_kubernetes(location):
         kubernetes.config.load_kube_config()
         apiclient = client.ApiClient()
         cluster = Cluster(name=location, apiclient=apiclient, namespace="default")
-        
+
         # Create local storage for workload data
         _, workload_pvc_name = create_local_storage(
             apiclient=apiclient,
             namespace="default",
-            host_path="/results"  # Using /results for LMBenchmark
+            host_path="/results",  # Using /results for LMBenchmark
         )
     elif location == "remote":
         config = client.Configuration()
@@ -40,14 +40,18 @@ def initialize_kubernetes(location):
         apiclient = client.ApiClient(config)
         urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
         cluster = Cluster(
-            name="llm", apiclient=apiclient, namespace=os.environ.get("FMPERF_OPENSHIFT_NAMESPACE")
+            name="llm",
+            apiclient=apiclient,
+            namespace=os.environ.get("FMPERF_OPENSHIFT_NAMESPACE"),
         )
-        
+
         # Create PVC using VPC Block Storage for remote deployment
         workload_pvc_name = create_vpc_block_storage(
             apiclient=apiclient,
             namespace=os.environ.get("FMPERF_OPENSHIFT_NAMESPACE"),
-            storage_class=os.environ.get("FMPERF_OPENSHIFT_STORAGECLASS", "nfs-client-pokprod")
+            storage_class=os.environ.get(
+                "FMPERF_OPENSHIFT_STORAGECLASS", "nfs-client-pokprod"
+            ),
         )
     else:
         raise ValueError("Valid choices for model_mode are local and remote")
@@ -61,7 +65,9 @@ if __name__ == "__main__":
 
     ## USER Entry: File Location for model workload parameters
     default_yaml_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), "yamls")
-    yaml_filename = os.environ.get("FMPERF_WORKLOAD_FILE", "lmbench_llama70b_2replica_H100.yaml")
+    yaml_filename = os.environ.get(
+        "FMPERF_WORKLOAD_FILE", "lmbench_llama70b_2replica_H100.yaml"
+    )
     WORKLOAD_FILE = os.path.join(default_yaml_dir, yaml_filename)
 
     # Initialize Kubernetes
@@ -74,9 +80,13 @@ if __name__ == "__main__":
     # Create stack spec for the existing vllm-d deployment
     stack_spec = StackSpec(
         name=os.environ.get("FMPERF_STACK_NAME", "llm-d-70b-2replicas-H100"),
-        stack_type=os.environ.get("FMPERF_STACK_TYPE", "llm-d"),  # This will automatically set endpoint to vllm-router-service
+        stack_type=os.environ.get(
+            "FMPERF_STACK_TYPE", "llm-d"
+        ),  # This will automatically set endpoint to vllm-router-service
         refresh_interval=300,  # Refresh model list every 5 minutes
-        endpoint_url=os.environ.get("FMPERF_ENDPOINT_URL", "inference-gateway")  # Service name
+        endpoint_url=os.environ.get(
+            "FMPERF_ENDPOINT_URL", "inference-gateway"
+        ),  # Service name
     )
 
     # USER Entry: Experiment variables
@@ -90,4 +100,4 @@ if __name__ == "__main__":
         stack_spec=stack_spec,  # Using stack_spec instead of model_spec
         workload_spec=workload_spec,
         repetition=REPETITION,
-    ) 
+    )

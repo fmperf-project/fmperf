@@ -92,6 +92,7 @@ def run(result_filename=None):
 
         if target == "tgis":
             from text_generation_tests.pb import generation_pb2_grpc as gpb2
+
             stub = gpb2.GenerationServiceStub(channel)
 
         t_start = time.time_ns()

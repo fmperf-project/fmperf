@@ -14,4 +14,4 @@ class DeployedModel:
         """
         self.spec = spec
         self.name = name
-        self.url = url 
+        self.url = url

@@ -183,4 +183,4 @@ class StackSpec:
             "refresh_interval": self.refresh_interval,
         }
         with open(file, "w") as f:
-            yaml.dump(config, f) 
+            yaml.dump(config, f)

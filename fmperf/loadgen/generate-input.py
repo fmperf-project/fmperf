@@ -81,15 +81,17 @@ text_generator = get_text()
 def generate_vllm_request(config, url):
     # Remove http:// prefix if present to avoid duplication
     url_no_prefix = url.replace("http://", "")
-    
-    model = requests.get("http://%s/v1/models" % (url_no_prefix)).json()["data"][0]["id"]
+
+    model = requests.get("http://%s/v1/models" % (url_no_prefix)).json()["data"][0][
+        "id"
+    ]
 
     # Set Hugging Face token if available in environment
     hf_token = os.environ.get("HUGGINGFACE_TOKEN") or os.environ.get("HF_TOKEN")
     tokenizer_kwargs = {}
     if hf_token:
         tokenizer_kwargs["token"] = hf_token
-        
+
     tokenizer = AutoTokenizer.from_pretrained(model, **tokenizer_kwargs)
 
     prompt_ids = tokenizer(next(text_generator)).input_ids[-config["in_tokens"] :]
