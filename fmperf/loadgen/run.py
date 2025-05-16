@@ -106,7 +106,7 @@ def run(result_filename=None):
 
             sample_request = sample_requests[sample_idx]["request"]
 
-            if target == "vllm":
+            if target == "vllm":  # StackSpec will also use this
                 headers = {"User-Agent": "fmaas-load-test"}
                 t0 = time.time_ns()
                 response = requests.post(
@@ -124,17 +124,17 @@ def run(result_filename=None):
                 t0 = time.time_ns()
                 response = stub.GenerateStream(message)
             else:
-                raise ValueError("Invalid target")
+                raise ValueError(f"Invalid target: {target}")
 
             stop = False
             response_idx = 0
 
-            if target == "vllm":
+            if target == "vllm":  # StackSpec will also use this
                 response_generator = get_streaming_response_vllm(response)
             elif target == "tgis":
                 response_generator = get_streaming_response_tgis(response)
             else:
-                raise ValueError("Invalid target")
+                raise ValueError(f"Invalid target: {target}")
 
             apply_backoff = False
 

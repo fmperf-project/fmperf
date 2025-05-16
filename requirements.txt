@@ -2,7 +2,6 @@ kubernetes==24.2.0
 black~=24.0
 pandas
 pyyaml
-typing
 pytest
 wheel
 scikit-learn
