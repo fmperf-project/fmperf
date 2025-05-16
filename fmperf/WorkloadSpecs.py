@@ -324,6 +324,7 @@ class LMBenchmarkWorkload(WorkloadSpec):
         overwrite: bool = False,
         service_account: str = None,
         chat_template: str = None,
+        use_chat_completions: bool = True,  # New parameter for chat completions
         # New benchmark configuration parameters
         num_users_warmup: int = 20,
         num_users: int = 15,
@@ -349,6 +350,7 @@ class LMBenchmarkWorkload(WorkloadSpec):
         self.answer_len = answer_len
         self.init_user_id = init_user_id
         self.test_duration = test_duration
+        self.use_chat_completions = use_chat_completions
         super().__init__(1, image, pvc_name, overwrite)
 
     @classmethod
@@ -395,6 +397,7 @@ class LMBenchmarkWorkload(WorkloadSpec):
             {"name": "ANSWER_LEN", "value": str(self.answer_len)},
             {"name": "INIT_USER_ID", "value": str(self.init_user_id)},
             {"name": "TEST_DURATION", "value": str(self.test_duration)},
+            {"name": "USE_CHAT_COMPLETIONS", "value": str(self.use_chat_completions)},
         ]
 
         # Add individual QPS values as separate parameters

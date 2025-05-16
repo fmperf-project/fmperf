@@ -2,15 +2,15 @@
 # This specification is used for running benchmarks with the LMBenchmark container
 model_name: "RedHatAI/Llama-4-Scout-17B-16E-Instruct-FP8-dynamic"  # Model identifier
 scenarios: "long-input"  # Scenarios to run (all, or sharegpt, long-input, short-input)
-qps_values: "0.1 0.25 0.5 1 2 3 4 5 7.5 10 15 20"  # Space-separated list of QPS values to test
+qps_values: "0.5 0.7 0.9 1 1.1 1.3 1.5 1.7 1.9 2 2.25 2.5 2.75 3 3.5 4 4.5 5"  # Space-separated list of QPS values to test
 image: "quay.io/chenw615/lmbenchmark:latest"  # Container image to use
 service_account: "default"  # Service account to use for the job 
 # New benchmark configuration parameters
-num_users_warmup: 20    # Number of users for warmup phase
+num_users_warmup: 15    # Number of users for warmup phase
 num_users: 15           # Number of concurrent users for testing
-num_rounds: 20          # Number of rounds to run the benchmark
-system_prompt: 1000     # System prompt token length
-chat_history:  8000     # Chat history token length
+num_rounds: 40          # Number of rounds to run the benchmark
+system_prompt: 0        # System prompt token length
+chat_history: 20000     # Chat history token length
 answer_len: 100         # Answer length in tokens
 init_user_id: 1         # Initial user ID
 test_duration: 600      # Test duration in seconds 
