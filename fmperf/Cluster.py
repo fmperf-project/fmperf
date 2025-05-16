@@ -40,8 +40,7 @@ class Cluster:
         self.security_context = {
             "allowPrivilegeEscalation": False,
             "capabilities": {"drop": ["ALL"]},
-            "runAsNonRoot": False,
-            "runAsUser": 0,
+            "runAsNonRoot": True,
             "seccompProfile": {"type": "RuntimeDefault"},
         }
 
@@ -412,6 +411,26 @@ class Cluster:
             # Add OUTPUT_PATH based on the volume mount and job name
             env.append({"name": "OUTPUT_PATH", "value": f"/requests/{job_name}"})
 
+            # Add HF_TOKEN from host environment if available
+            hf_token = (
+                os.environ.get("HF_TOKEN")
+                or os.environ.get("HUGGINGFACE_TOKEN")
+                or os.environ.get("hf_token")
+                or os.environ.get("huggingface_token")
+            )
+            if hf_token:
+                env.append({"name": "HF_TOKEN", "value": hf_token})
+            elif os.environ.get("HF_TOKEN_SECRET"):
+                # Use specified secret name if provided
+                env.append({
+                    "name": "HF_TOKEN",
+                    "valueFrom": {
+                        "secretKeyRef": {
+                            "name": os.environ.get("HF_TOKEN_SECRET"),
+                            "key": "HF_TOKEN"
+                        }
+                    }
+                })
             # Add Hugging Face cache environment variables
             env.extend(
                 [
@@ -423,17 +442,6 @@ class Cluster:
                     },
                 ]
             )
-
-            # Add HF_TOKEN from host environment if available
-            hf_token = (
-                os.environ.get("HF_TOKEN")
-                or os.environ.get("HUGGINGFACE_TOKEN")
-                or os.environ.get("hf_token")
-                or os.environ.get("huggingface_token")
-            )
-            if hf_token:
-                env.append({"name": "HF_TOKEN", "value": hf_token})
-
             container_name = "guidellm-benchmark"
             container_args = []  # Use default entrypoint
         elif isinstance(workload.spec, LMBenchmarkWorkload):
@@ -441,6 +449,26 @@ class Cluster:
             env = workload.spec.get_env(target, model, workload.file)
             job_name = f"lmbenchmark-evaluate{'-'+id if id else ''}"
 
+            # Add HF_TOKEN from host environment if available
+            hf_token = (
+                os.environ.get("HF_TOKEN")
+                or os.environ.get("HUGGINGFACE_TOKEN")
+                or os.environ.get("hf_token")
+                or os.environ.get("huggingface_token")
+            )
+            if hf_token:
+                env.append({"name": "HF_TOKEN", "value": hf_token})
+            elif os.environ.get("HF_TOKEN_SECRET"):
+                # Use specified secret name if provided
+                env.append({
+                    "name": "HF_TOKEN",
+                    "valueFrom": {
+                        "secretKeyRef": {
+                            "name": os.environ.get("HF_TOKEN_SECRET"),
+                            "key": "HF_TOKEN"
+                        }
+                    }
+                })
             # Add Hugging Face cache environment variables
             env.extend(
                 [
@@ -452,23 +480,15 @@ class Cluster:
                     },
                 ]
             )
-
-            # Add HF_TOKEN from host environment if available
-            hf_token = (
-                os.environ.get("HF_TOKEN")
-                or os.environ.get("HUGGINGFACE_TOKEN")
-                or os.environ.get("hf_token")
-                or os.environ.get("huggingface_token")
-            )
-            if hf_token:
-                env.append({"name": "HF_TOKEN", "value": hf_token})
-
             container_name = "lmbenchmark"
             container_args = [
                 "QPS_VALUES=($(env | grep QPS_VALUES_ | sort -V | cut -d= -f2)); "
-                ". ~/.bashrc && . .venv/bin/activate && "
+                ". .venv/bin/activate && "
                 '/app/run_benchmarks.sh "$MODEL" "$BASE_URL" "$SAVE_FILE_KEY" "$SCENARIOS" "${QPS_VALUES[@]}"'
             ]
+            # Add bashrc loading only if .bashrc exists
+            if os.path.exists(os.path.expanduser("~/.bashrc")):
+                container_args[1] = ". ~/.bashrc && " + container_args[1]
         else:
             env = [
                 {"name": "MODEL_ID", "value": model_name},
@@ -528,12 +548,13 @@ class Cluster:
                                 "command": [
                                     "sh",
                                     "-c",
-                                    "mkdir -p /requests/hf_cache/datasets && FOLDER_NAME=$(echo $SAVE_FILE_KEY | sed 's|/requests/||' | sed 's|/LMBench||') && mkdir -p /requests/$FOLDER_NAME && chmod -R 777 /requests && ls -la /requests",
+                                    "mkdir -p /requests/hf_cache/datasets && FOLDER_NAME=$(echo $SAVE_FILE_KEY | sed 's|/requests/||' | sed 's|/LMBench||') && mkdir -p /requests/$FOLDER_NAME && ls -la /requests",
                                 ],
                                 "volumeMounts": [
                                     {"name": "requests", "mountPath": "/requests"}
                                 ],
                                 "env": env,
+                                "securityContext": self.security_context,
                             }
                         ],
                         "containers": [
@@ -547,10 +568,7 @@ class Cluster:
                                 ),
                                 "args": container_args,
                                 "volumeMounts": volume_mounts,
-                                "securityContext": {
-                                    "allowPrivilegeEscalation": False,
-                                    "capabilities": {"drop": ["ALL"]},
-                                },
+                                "securityContext": self.security_context,
                             }
                         ],
                         "restartPolicy": "Never",
