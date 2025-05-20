@@ -544,7 +544,7 @@ class Cluster:
                         "initContainers": [
                             {
                                 "name": "init-cache-dirs",
-                                "image": "busybox",
+                                "image": "registry.access.redhat.com/ubi9-minimal",
                                 "command": [
                                     "sh",
                                     "-c",
