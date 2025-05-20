@@ -660,6 +660,6 @@ class Cluster:
         else:
             perf_out, energy_out = None, None
 
-        deleting.delete_namespaced_job(job_name, self.namespace)
+        #deleting.delete_namespaced_job(job_name, self.namespace)
 
         return perf_out, energy_out
