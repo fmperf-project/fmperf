@@ -31,8 +31,8 @@ venv: ## Create a Python virtual environment with core requirements
 		source $(VENV)/bin/activate; \
 		pip install --upgrade pip; \
 	else \
-		echo "Virtual environment already exists, leaving as-is"; \
-		exit 1; \
+		echo "Virtual environment already exists, no action needed."; \
+		exit 0; \
 	fi
 	@echo "Installing core dependencies..."
 	@source $(VENV)/bin/activate; pip install -r requirements.txt; pip install -e .;
