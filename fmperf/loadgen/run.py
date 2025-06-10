@@ -12,12 +12,12 @@ from google.protobuf import json_format
 from fmperf.utils import parse_results
 from datetime import datetime
 from .collect_energy import collect_metrics, summarize_energy
-from fmperf.utils.constants import REQUESTS_DIR, REQUESTS_FILENAME, RESULTS_ALL_FILENAME
+from fmperf.utils.constants import REQUESTS_DIR, REQUESTS_FILENAME, RESULTS_FILENAME
 
 
 def run(result_filename=None):
     if result_filename is None:
-        result_filename = RESULTS_ALL_FILENAME
+        result_filename = RESULTS_FILENAME
 
     def get_streaming_response_tgis(response):
         stop = False
@@ -106,7 +106,7 @@ def run(result_filename=None):
 
             sample_request = sample_requests[sample_idx]["request"]
 
-            if target == "vllm":
+            if target == "vllm":  # StackSpec will also use this
                 headers = {"User-Agent": "fmaas-load-test"}
                 t0 = time.time_ns()
                 response = requests.post(
@@ -124,17 +124,17 @@ def run(result_filename=None):
                 t0 = time.time_ns()
                 response = stub.GenerateStream(message)
             else:
-                raise ValueError("Invalid target")
+                raise ValueError(f"Invalid target: {target}")
 
             stop = False
             response_idx = 0
 
-            if target == "vllm":
+            if target == "vllm":  # StackSpec will also use this
                 response_generator = get_streaming_response_vllm(response)
             elif target == "tgis":
                 response_generator = get_streaming_response_tgis(response)
             else:
-                raise ValueError("Invalid target")
+                raise ValueError(f"Invalid target: {target}")
 
             apply_backoff = False
 
