@@ -1,10 +1,7 @@
+durations
 kubernetes==24.2.0
-black~=24.0
 pandas
 pyyaml
-pytest
-wheel
 scikit-learn
-durations
-transformers
 sentencepiece
+transformers
