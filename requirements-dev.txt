@@ -1,0 +1,5 @@
+black~=24.0
+mypy>=1.14.1
+pytest
+ruff>=0.9.4
+wheel

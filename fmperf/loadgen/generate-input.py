@@ -14,8 +14,17 @@ import traceback
 from transformers import AutoTokenizer
 from fmperf.utils.constants import REQUESTS_DIR
 
-# read in seed text
-seed_text_file = impresources.files(fmperf.data) / "ai.txt"
+code = os.getenv("CODE", "false").lower() != "false"
+
+if code:
+    import fmperf
+
+    tmp = fmperf.__file__.split("/")[:-1]
+    tmp.append("Cluster.py")
+    seed_text_file = "/".join(tmp)
+else:
+    seed_text_file = impresources.files(fmperf.data) / "ai.txt"
+
 with open(seed_text_file, "r") as f:
     text = f.read()
 
