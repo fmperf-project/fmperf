@@ -13,11 +13,13 @@ class WorkloadSpec:
         image: str = "quay.io/fmperf/fmperf:main",
         pvc_name: str = None,
         overwrite: bool = False,
+        code: bool = False,
     ):
         self.sample_size = sample_size
         self.image = image
         self.pvc_name = pvc_name
         self.overwrite = overwrite
+        self.code = code
 
     @classmethod
     def from_yaml(cls, file: str):
@@ -58,6 +60,10 @@ class WorkloadSpec:
                 "name": "OVERWRITE",
                 "value": str(self.overwrite),
             },
+            {
+                "name": "CODE",
+                "value": str(self.code),
+            },
             {"name": "REQUESTS_FILENAME", "value": outfile},
             {"name": "WORKLOAD_DIR", "value": "/requests"},
             {"name": "HF_HOME", "value": "/tmp/hf_cache"},
@@ -86,6 +92,7 @@ class HomogeneousWorkloadSpec(WorkloadSpec):
         image: str = "fmperf-project/fmperf:local",
         pvc_name: str = None,
         overwrite: bool = False,
+        code: bool = False,
         model_name: str = None,
     ):
         self.input_tokens = input_tokens
@@ -93,7 +100,7 @@ class HomogeneousWorkloadSpec(WorkloadSpec):
         self.greedy = greedy
         self.model_name = model_name
 
-        super().__init__(1, image, pvc_name, overwrite)
+        super().__init__(1, image, pvc_name, overwrite, code)
 
     @classmethod
     def from_yaml(cls, file: str):
@@ -152,6 +159,7 @@ class HeterogeneousWorkloadSpec(WorkloadSpec):
         image: str = "quay.io/fmperf/fmperf:main",
         pvc_name: str = None,
         overwrite: bool = False,
+        code: bool = False,
         model_name: str = None,
     ):
         self.min_input_tokens = min_input_tokens
@@ -160,7 +168,7 @@ class HeterogeneousWorkloadSpec(WorkloadSpec):
         self.max_output_tokens = max_output_tokens
         self.frac_greedy = frac_greedy
         self.model_name = model_name
-        super().__init__(sample_size, image, pvc_name, overwrite)
+        super().__init__(sample_size, image, pvc_name, overwrite, code)
 
     @classmethod
     def from_yaml(cls, file: str):
@@ -214,8 +222,9 @@ class RealisticWorkloadSpec(WorkloadSpec):
         image: str = "quay.io/fmperf/fmperf:main",
         pvc_name: str = None,
         overwrite: bool = False,
+        code: bool = False,
     ):
-        super().__init__(sample_size, image, pvc_name, overwrite)
+        super().__init__(sample_size, image, pvc_name, overwrite, code)
 
     @classmethod
     def from_yaml(cls, file: str):
