@@ -6,13 +6,13 @@ import os
 import grpc
 import pickle
 from google.protobuf import json_format
-from text_generation_tests.pb import generation_pb2_grpc as gpb2, generation_pb2 as pb2
 import requests
 from typing import Iterable, List
 from importlib import resources as impresources
 import fmperf.data
 import traceback
 from transformers import AutoTokenizer
+from fmperf.utils.constants import REQUESTS_DIR
 
 code = os.getenv("CODE", "false").lower() != "false"
 
@@ -40,15 +40,34 @@ args = parser.parse_args()
 
 def get_streaming_response(response: requests.Response):
     finished = False
+    prev_completion_tokens = 0
     for chunk in response.iter_lines(
         chunk_size=8192, decode_unicode=False, delimiter=b"\n"
     ):
         if chunk and not finished:
             data = chunk.decode("utf-8").strip().split("data: ")[1]
-            out = json.loads(data)["choices"][0]
+            data_parsed = json.loads(data)
+            out = data_parsed["choices"][0]
             finished = out["finish_reason"] is not None
-            if not (out["text"] == ""):  # filter empty tokens
-                yield out
+
+            if ("usage" in data_parsed) and (data_parsed["usage"] is not None):
+                usage = data_parsed["usage"]
+                token_count = usage["completion_tokens"] - prev_completion_tokens
+                prev_completion_tokens = usage["completion_tokens"]
+                for i in range(token_count):
+                    yield {
+                        "index": out["index"],
+                        "text": "" if (i < token_count - 1) else out["text"],
+                        "logprobs": None,
+                        "finish_reason": (
+                            None if (i < token_count - 1) else out["finish_reason"]
+                        ),
+                        "stop_reason": (
+                            None if (i < token_count - 1) else out["stop_reason"]
+                        ),
+                    }
+            else:
+                raise RuntimeError("No usage data in server response")
 
 
 def get_text():
@@ -69,9 +88,20 @@ text_generator = get_text()
 
 
 def generate_vllm_request(config, url):
-    model = requests.get("http://%s/v1/models" % (url)).json()["data"][0]["id"]
+    # Remove http:// prefix if present to avoid duplication
+    url_no_prefix = url.replace("http://", "")
 
-    tokenizer = AutoTokenizer.from_pretrained(model)
+    model = requests.get("http://%s/v1/models" % (url_no_prefix)).json()["data"][0][
+        "id"
+    ]
+
+    # Set Hugging Face token if available in environment
+    hf_token = os.environ.get("HUGGINGFACE_TOKEN") or os.environ.get("HF_TOKEN")
+    tokenizer_kwargs = {}
+    if hf_token:
+        tokenizer_kwargs["token"] = hf_token
+
+    tokenizer = AutoTokenizer.from_pretrained(model, **tokenizer_kwargs)
 
     prompt_ids = tokenizer(next(text_generator)).input_ids[-config["in_tokens"] :]
 
@@ -80,7 +110,9 @@ def generate_vllm_request(config, url):
         "prompt": prompt_ids,
         "ignore_eos": True,
         "max_tokens": config["out_tokens"],
+        "seed": 42,
         "stream": True,
+        "stream_options": {"include_usage": True, "continuous_usage_stats": True},
     }
 
     if not args.from_model:
@@ -98,7 +130,7 @@ def generate_vllm_request(config, url):
     headers = {"User-Agent": "Test Client"}
 
     response = requests.post(
-        "http://%s/v1/completions" % (url),
+        "http://%s/v1/completions" % (url_no_prefix),
         headers=headers,
         json=request,
         stream=True,
@@ -121,6 +153,11 @@ def generate_tgis_request(config, url):
     """
     Generate (streaming) gRPC request and expected response
     """
+
+    from text_generation_tests.pb import (
+        generation_pb2_grpc as gpb2,
+        generation_pb2 as pb2,
+    )
 
     channel = grpc.insecure_channel(url)
     stub = gpb2.GenerationServiceStub(channel)
@@ -190,7 +227,7 @@ url = os.environ["URL"]
 # overwrite
 overwrite = os.getenv("OVERWRITE", "false").lower() != "false"
 
-if os.path.isfile("/requests/%s" % (filename)) and not overwrite:
+if os.path.isfile(os.path.join(REQUESTS_DIR, filename)) and not overwrite:
     print("File %s already exists; skipping workload generation" % (filename))
     sys.exit()
 
@@ -258,10 +295,10 @@ for sample_idx in range(sample_size):
     try:
         if target == "tgis":
             case["request"], case["expected"] = generate_tgis_request(config, url)
-        elif target == "vllm":
+        elif target == "vllm":  # StackSpec will also use this
             case["request"], case["expected"] = generate_vllm_request(config, url)
         else:
-            raise ValueError("invalid target")
+            raise ValueError(f"Invalid target: {target}")
 
         print(json.dumps(case, indent=4))
         cases.append(case)
@@ -271,5 +308,5 @@ for sample_idx in range(sample_size):
 
 if len(cases) > 0:
     print(">> Writing %d requests to %s" % (len(cases), filename))
-    with open("/requests/%s" % (filename), "w") as f:
+    with open(os.path.join(REQUESTS_DIR, filename), "w") as f:
         json.dump(cases, f)

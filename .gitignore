@@ -3,6 +3,10 @@ __pycache__/
 *.py[cod]
 *$py.class
 
+# macOS system files
+.DS_Store
+**/.DS_Store
+
 # C extensions
 *.so
 
@@ -162,3 +166,10 @@ cython_debug/
 test/result_*
 examples/*.csv
 examples/*.json
+
+# VS Code
+.vscode/
+
+logs/
+pod_logs*/
+

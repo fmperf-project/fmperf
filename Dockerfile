@@ -31,13 +31,14 @@ WORKDIR /app
 ## Dev Dependencies Layer ######################################################
 FROM base as dev_dependencies
 
-COPY requirements.txt /app/requirements.txt
+COPY requirements.txt requirements-dev.txt /app/
 
 # speed up pip installs by caching a directory across builds
 # https://pythonspeed.com/articles/docker-cache-pip-downloads/
 RUN --mount=type=cache,target=/root/.cache \
     true \
     && pip install -r /app/requirements.txt \
+    && pip install -r /app/requirements-dev.txt \
     && true
 
 # Install kustomize
@@ -82,5 +83,6 @@ WORKDIR /home/fmperf
 # Set permissions for openshift
 RUN chmod -R g+rwx /home/fmperf
 
+ENV REQUESTS_DIR=/requests
 # Sanity check: We can import the installed wheel
 RUN python -c "import ${SOURCE_DIR}"
