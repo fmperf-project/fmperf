@@ -171,8 +171,8 @@ The cluster is now ready to run the benchmark. As a first try, run the examples/
 helm repo add prometheus-community https://prometheus-community.github.io/helm-charts
 ```
 
-# Run (to enable collection of TGIS and vLLM metrics)
 ```shell
+# Run (to enable collection of TGIS and vLLM metrics)
 helm install prometheus-community/kube-prometheus-stack --create-namespace --namespace monitoring --generate-name
 ```
 
